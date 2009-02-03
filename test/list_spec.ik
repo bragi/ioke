@@ -819,6 +819,20 @@ describe(List,
       List should checkReceiverTypeOn(:"<=>", [])
     )
   )
+  
+  describe("join",
+    it("should give nil when empty",
+      [] join should == nil
+    )
+    
+    it("should return elements joined with default separator",
+      [1, 2] join should == "1,2"
+    )
+    
+    it("should return elements joined with provided separator",
+      ["a", :s] join("; ") should == "a; s"
+    )
+  )
 )
 
 describe("DefaultBehavior", 

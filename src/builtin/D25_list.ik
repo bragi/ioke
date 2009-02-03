@@ -60,3 +60,10 @@ List ?& = dmacro(
     self))
 
 List do(=== = generateMatchMethod(==))
+
+List join = method(
+  "Returns a string created by converting each element of the list to a text, separated by separator.",
+  separator ",",
+
+  map(asText) fold(sum, element,
+    sum + separator + element))

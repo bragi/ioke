@@ -5,6 +5,8 @@ package ioke.lang;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -74,6 +76,19 @@ public class JavaWrapper extends IokeData {
                 }
             }
 
+            for(Field f : clz.getDeclaredFields()) {
+                try {
+                    f.setAccessible(true);
+                } catch(Exception e) {}
+
+                Object getter = runtime.createJavaFieldGetter(f);
+                obj.setCell("field:" + f.getName(), getter);
+
+                if(!Modifier.isFinal(f.getModifiers())) {
+                    obj.setCell("field:" + f.getName() + "=", runtime.createJavaFieldSetter(f));
+                }
+            }
+
             obj.setCell("new", runtime.createJavaMethod(clz.getDeclaredConstructors()));
         } catch(Throwable e) {
             System.err.print("woopsie: ");
@@ -98,6 +113,28 @@ public class JavaWrapper extends IokeData {
                         return context.runtime.newText(((JavaWrapper)IokeObject.data(on)).kind);
                     } else {
                         return context.runtime.newText(on.getClass().getName().replaceAll("\\.", ":"));
+                    }
+                }
+            }));
+
+        obj.registerMethod(runtime.newJavaMethod("returns the true if the receiver is a class object, false otherwise.", new JavaMethod.WithNoArguments("class?") {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    if(on instanceof IokeObject) {
+                        return (((JavaWrapper)IokeObject.data(on)).clazz == Class.class) ? context.runtime._true : context.runtime._false;
+                    } else {
+                        return (on instanceof Class) ? context.runtime._true : context.runtime._false;
+                    }
+                }
+            }));
+
+        obj.registerMethod(runtime.newJavaMethod("calls toString on the receiver and returns it.", new JavaMethod.WithNoArguments("class:toString") {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    if(on instanceof IokeObject) {
+                        return ((JavaWrapper)IokeObject.data(on)).object.toString();
+                    } else {
+                        return on.toString();
                     }
                 }
             }));

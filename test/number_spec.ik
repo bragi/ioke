@@ -46,6 +46,23 @@ describe(Number,
   it("should mimic Comparing",
     Number should mimic(Mixins Comparing))
 
+  describe("zero?",
+    it("should return true for int zero",
+      0 should be zero)
+    
+    it("should return true for real zero",
+      0.0 should be zero)
+
+    it("should return false for a negative value",
+      -1 should not be zero)
+
+    it("should return false for a real > 0.0",
+      0.1 should not be zero)
+
+    it("should return false for an int > 0",
+      1 should not be zero)
+  )
+
   describe("negation",
     it("should return zero for zero",
       0 negation should == 0)
@@ -61,6 +78,20 @@ describe(Number,
 
     it("should return a large negative number for a large positive number",
       353654645676451123345674 negation should == -353654645676451123345674)
+  )
+
+  describe("abs",
+    it("should return zero for zero",
+      0 abs should == 0)
+    
+    it("should return the negation for negative number",
+      -1 abs should == 1)
+
+    it("should return the receiver for positive number",
+      1 abs should == 1)
+
+    it("should return a large positive number for a large negative number",
+      -353654645676451123345674 abs should == 353654645676451123345674)
   )
 
   describe("===",

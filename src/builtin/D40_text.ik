@@ -21,6 +21,21 @@ Text chars = method(
 	"returns a list of each character in this text",
 	
 	self split(""))
+	
+Text truncate = method(
+  "returns text truncated to length characters (default: 30) if it is longer than length. When truncated, last characters are replaced by given omission (default: \"...\")",
+  length: 30, omission: "...",
+  
+  if(self length <= length,
+    self,
+    
+    if(length < omission length,
+      error!("Truncated length is smaller than omission length")
+    )
+    cutLength = length - omission length - 1
+    self[0..cutLength] + omission
+  )
+)
 
 Text ?| = dmacro(
   "if this text is empty, returns the result of evaluating the argument, otherwise returns the text",

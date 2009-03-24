@@ -237,6 +237,29 @@ describe("Text",
     )
   )
   
+  describe("truncate",
+    it("should not truncate short texts",
+      "Hello World!" truncate(length: 12) should == "Hello World!"
+    )
+    
+    it("should truncate long enough texts",
+    "Hello World!!" truncate(length: 12) should == "Hello Wor..."
+    )
+    
+    it("should use default length of 30",
+      "1234567890123456789012345678901" truncate should == "123456789012345678901234567..."
+    )
+    
+    it("should use provided omission",
+      "123456789012345678901" truncate(length: 20, omission: "...(omission)") should == "1234567...(omission)"
+    )
+    
+    it("should raise condition when omission longer than truncating length",
+      fn("123" truncate(length: 1)) should signal(Condition Error)
+    )
+    
+  )
+  
   describe("split",
     it("should return the string if nothing to split on is available",
       "foo" split("b") should == ["foo"]

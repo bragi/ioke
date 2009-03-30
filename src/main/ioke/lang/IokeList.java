@@ -31,6 +31,10 @@ public class IokeList extends IokeData {
         ((IokeList)IokeObject.data(list)).list.add(obj);
     }
 
+    public static void add(Object list, int index, Object obj) {
+        ((IokeList)IokeObject.data(list)).list.add(index, obj);
+    }
+
     @Override
     public void init(IokeObject obj) throws ControlFlow {
         final Runtime runtime = obj.runtime;
@@ -172,7 +176,73 @@ public class IokeList extends IokeData {
                     return on;
                 }
             }));
-        
+
+        obj.registerMethod(runtime.newJavaMethod("takes one argument and adds it at the end of the list, and then returns the list", new TypeCheckingJavaMethod("append!") {
+                private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                    .builder()
+                    .receiverMustMimic(runtime.list)
+                    .withRequiredPositional("value")
+                    .getArguments();
+
+                @Override
+                public TypeCheckingArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject self, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    Object value = args.get(0);
+                    IokeList.add(on, value);
+                    return on;
+                }
+            }));
+
+        obj.aliasMethod("append!", "push!", null, null);
+
+        obj.registerMethod(runtime.newJavaMethod("takes one argument and adds it at the beginning of the list, and then returns the list", new TypeCheckingJavaMethod("prepend!") {
+                private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                    .builder()
+                    .receiverMustMimic(runtime.list)
+                    .withRequiredPositional("value")
+                    .getArguments();
+
+                @Override
+                public TypeCheckingArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject self, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    Object value = args.get(0);
+                    IokeList.add(on, 0, value);
+                    return on;
+                }
+            }));
+
+        obj.aliasMethod("prepend!", "unshift!", null, null);
+
+        obj.registerMethod(runtime.newJavaMethod("removes the last element from the list and returns it. returns nil if the list is empty.", new TypeCheckingJavaMethod.WithNoArguments("pop!", runtime.list) {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    List<Object> l = ((IokeList)IokeObject.data(on)).getList();
+                    if(l.size() == 0) {
+                        return context.runtime.nil;
+                    }
+                    return l.remove(l.size()-1);
+                }
+            }));
+
+        obj.registerMethod(runtime.newJavaMethod("removes the first element from the list and returns it. returns nil if the list is empty.", new TypeCheckingJavaMethod.WithNoArguments("shift!", runtime.list) {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    List<Object> l = ((IokeList)IokeObject.data(on)).getList();
+                    if(l.size() == 0) {
+                        return context.runtime.nil;
+                    }
+                    return l.remove(0);
+                }
+            }));
+
         obj.registerMethod(runtime.newJavaMethod("will remove all the entries from the list, and then returns the list", new TypeCheckingJavaMethod.WithNoArguments("clear!", runtime.list) {
                 @Override
                 public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
@@ -358,6 +428,75 @@ public class IokeList extends IokeData {
             }));
 
         obj.aliasMethod("at", "[]", null, null);
+
+        obj.registerMethod(runtime.newJavaMethod("takes an index and zero or more objects to insert at that point. the index can be negative to index from the end of the list. if the index is positive and larger than the size of the list, the list will be filled with nils inbetween.", new TypeCheckingJavaMethod("insert!") {
+                private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                    .builder()
+                    .receiverMustMimic(runtime.list)
+                    .withRequiredPositional("index").whichMustMimic(runtime.number)
+                	.withRest("objects")
+                    .getArguments();
+
+                @Override
+                public TypeCheckingArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, final IokeObject context, final IokeObject message) throws ControlFlow {
+                    int index = ((Number)IokeObject.data(args.get(0))).asJavaInteger();
+                    List<Object> l = ((IokeList)IokeObject.data(on)).getList();
+                    int size = l.size();
+                    if(index < 0) {
+                        index = size + index + 1;
+                    }
+
+                    if(args.size()>1) {
+                        while(index < 0) {
+                            final IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
+                                                                                               message, 
+                                                                                               context, 
+                                                                                               "Error", 
+                                                                                               "Index"), context).mimic(message, context);
+                            condition.setCell("message", message);
+                            condition.setCell("context", context);
+                            condition.setCell("receiver", on);
+                            condition.setCell("index", context.runtime.newNumber(index));
+
+                            final int[] newCell = new int[]{index};
+
+                            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
+                                    public void run() throws ControlFlow {
+                                        context.runtime.errorCondition(condition);
+                                    }}, 
+                                context,
+                                new Restart.ArgumentGivingRestart("useValue") { 
+                                    public List<String> getArgumentNames() {
+                                        return new ArrayList<String>(Arrays.asList("newValue"));
+                                    }
+
+                                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
+                                        newCell[0] = Number.extractInt(arguments.get(0), message, context);
+                                        return context.runtime.nil;
+                                    }
+                                }
+                                );
+
+                            index = newCell[0];
+                            if(index < 0) {
+                                index = size + index;
+                            }
+                        }
+
+                        for(int x = (index-size); x>0; x--) {
+                            l.add(context.runtime.nil);
+                        }
+                        l.addAll(index, args.subList(1, args.size()));
+                    }
+
+                    return on;
+                }
+            }));
 
         obj.registerMethod(runtime.newJavaMethod("takes two arguments, the index of the element to set, and the value to set. the index can be negative and will in that case set indexed from the end of the list. if the index is larger than the current size, the list will be expanded with nils. an exception will be raised if a abs(negative index) is larger than the size.", new TypeCheckingJavaMethod("at=") {
                 private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition

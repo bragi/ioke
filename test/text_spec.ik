@@ -727,6 +727,54 @@ describe("Text",
     )
   )
 
+  describe("inspect",
+    it("should escape slashes in output correctly",
+      "\\foo" inspect should == "\"\\\\foo\""
+    )
+
+    it("should escape double quotes in output correctly",
+      "\"" inspect should == "\"\\\"\""
+    )
+
+    it("should escape \\b in output correctly",
+      "\b" inspect should == "\"\\b\""
+      "\010" inspect should == "\"\\b\""
+    )
+
+    it("should escape \\f in output correctly",
+      "\f" inspect should == "\"\\f\""
+    )
+
+    it("should escape \\r in output correctly",
+      "\r" inspect should == "\"\\r\""
+    )
+
+    it("should escape \\n in output correctly",
+      "\n" inspect should == "\"\\n\""
+    )
+
+    it("should escape \\t in output correctly",
+      "\t" inspect should == "\"\\t\""
+    )
+
+    it("should escape \\e in output correctly",
+      "\e" inspect should == "\"\\e\""
+    )
+
+    it("should escape unprintable things",
+      "\001" inspect should == "\"\\001\""
+      "\177" inspect should == "\"\\177\""
+      "\377" inspect should == "\"\\377\""
+      "\uFFFE" inspect should == "\"\\uFFFE\""
+    )
+    
+    it("should escape a # correctly",
+      "#" inspect should == "\"#\""
+      "#blah" inspect should == "\"#blah\""
+      "\#{foo}" inspect should == "\"\\\#{foo}\""
+    )
+  )
+
   describe("script",
     it("should determine the script for a 1-character Text",
       "a" script should be :Latin

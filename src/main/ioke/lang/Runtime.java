@@ -56,7 +56,7 @@ public class Runtime {
     public IokeObject _false = new IokeObject(this, "false is an oddball object that always represents itself. It can not be mimicked and (alongside nil) is one of the two false values.", IokeData.False);
     public IokeObject text = new IokeObject(this, "Contains an immutable piece of text.", new Text(""));
     public IokeObject symbol = new IokeObject(this, "Represents a symbol - an object that always represents itself.", new Symbol(""));
-    public IokeObject number = new IokeObject(this, "Represents an exact number", new Number("0"));
+    public IokeObject number = new IokeObject(this, "Represents an exact number", new Number(Number.getFrom("0")));
     public IokeObject method = new IokeObject(this, "Method is the origin of all methods in the system, both default and Java..", new Method((String)null));
     public IokeObject defaultMethod = new IokeObject(this, "DefaultMethod is the instance all methods in the system are derived from.", new DefaultMethod((String)null));
     public IokeObject javaMethod = new IokeObject(this, "JavaMethod is a derivation of Method that represents a primitive implemented in Java.", new JavaMethod.WithNoArguments((String)null));
@@ -89,6 +89,8 @@ public class Runtime {
     public IokeObject regexp = new IokeObject(this, "A regular expression allows you to matching text against a pattern.", Regexp.create("", ""));
 
     public IokeObject javaGround = new IokeObject(this, "JavaGround is the place that defines the connections to the Java integration subsystem");
+
+    public IokeObject javaArray = new IokeObject(this, "JavaArray is the common mimic that defines all the magic methods on native java arrays");
 
     public IokeObject integer = null;
     public IokeObject decimal = null;
@@ -151,6 +153,8 @@ public class Runtime {
     public IokeObject isApplicableMessage = newMessage("applicable?");
 
     public IokeObject coerceIntoJavaCodeMessage = newMessage("java:coerceCode");
+
+    public IokeObject useWhatMessage = newMessage("UseWhat");
 
     // NOT TO BE EXPOSED TO Ioke - used for internal usage only
     public final NullObject nul = new NullObject(this);
@@ -222,6 +226,7 @@ public class Runtime {
         FileSystem.init(fileSystem);
         regexp.init();
         JavaGround.init(javaGround);
+        JavaArray.init(javaArray);
         javaWrapper.init();
 
         iokeGround.mimicsWithoutCheck(defaultBehavior);
@@ -306,6 +311,7 @@ public class Runtime {
             evaluateString("use(\"builtin/A15_dmacro\")", message, ground);
             evaluateString("use(\"builtin/A20_comparing\")", message, ground);
             evaluateString("use(\"builtin/A25_defaultBehavior_inspection\")", message, ground);
+            evaluateString("use(\"builtin/A30_system\")", message, ground);
 
             evaluateString("use(\"builtin/D05_number\")", message, ground);
             evaluateString("use(\"builtin/D10_call\")", message, ground);
@@ -613,6 +619,9 @@ public class Runtime {
             } else {
                 IokeObject obj = this.javaWrapper.allocateCopy(null, null);
                 Class<?> clz = (Class)object;
+                if(((Class)object).isArray()) {
+                    obj.mimicsWithoutCheck(javaArray);
+                }
                 obj.mimicsWithoutCheck(registry.wrap(Class.class));
                 obj.mimicsWithoutCheck(registry.wrap(clz.getSuperclass()));
                 for(Class<?> i : clz.getInterfaces()) {
@@ -656,39 +665,37 @@ public class Runtime {
         return newMethod(null, this.javaMethod, new JavaFieldSetterJavaMethod(field));
     }
 
-    public IokeObject newNumber(String number) throws ControlFlow {
-        IokeObject obj = this.integer.allocateCopy(null, null);
-        obj.mimicsWithoutCheck(this.integer);
-        obj.setData(Number.integer(number));
-        return obj;
+    public IokeObject newNumber(String number) {
+        return newNumber(Number.getFrom(number));
     }
 
+    public IokeObject newNumber(long number) {
+        return newNumber(Number.getFrom(number));
+    }
+
+    private Map<IntNum, IokeObject> numCache = new HashMap<IntNum, IokeObject>();
+
     public IokeObject newNumber(IntNum number) {
-        IokeObject obj = this.integer.allocateCopy(null, null);
-        obj.mimicsWithoutCheck(this.integer);
-        obj.setData(Number.integer(number));
+        IokeObject obj = null;
+        obj = numCache.get(number);
+        if(obj == null) {
+            obj = this.integer.allocateCopy(null, null);
+            obj.mimicsWithoutCheck(this.integer);
+            obj.setData(Number.integer(number));
+            numCache.put(number, obj);
+        }
         return obj;
     }
 
     public IokeObject newNumber(RatNum number) {
         if(number instanceof IntNum) {
-            IokeObject obj = this.integer.allocateCopy(null, null);
-            obj.mimicsWithoutCheck(this.integer);
-            obj.setData(Number.integer((IntNum)number));
-            return obj;
+            return newNumber((IntNum)number);
         } else {
             IokeObject obj = this.ratio.allocateCopy(null, null);
             obj.mimicsWithoutCheck(this.ratio);
             obj.setData(Number.ratio((IntFraction)number));
             return obj;
         }
-    }
-
-    public IokeObject newNumber(long number) {
-        IokeObject obj = this.integer.allocateCopy(null, null);
-        obj.mimicsWithoutCheck(this.integer);
-        obj.setData(Number.integer(number));
-        return obj;
     }
 
     public IokeObject newMethod(String doc, IokeObject tp, Method impl) throws ControlFlow {

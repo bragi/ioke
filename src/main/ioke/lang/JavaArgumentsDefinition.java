@@ -311,7 +311,7 @@ public class JavaArgumentsDefinition {
                 } else {
                     String s = name.replaceAll(":", ".");
                     try {
-                        into = Class.forName(s);
+                        into = Class.forName(s, true, context.runtime.classRegistry.getClassLoader());
                     } catch(Exception e) {
                         into = null;
                     }
@@ -518,7 +518,7 @@ public class JavaArgumentsDefinition {
         return members[i];
     }
 
-    private IokeObject findAbstractMethodNames(Class<?> type, IokeObject context) throws ControlFlow {
+    public static IokeObject findAbstractMethodNames(Class<?> type, IokeObject context) throws ControlFlow {
         List<Object> names = new ArrayList<Object>();
         for(java.lang.reflect.Method m : type.getMethods()) {
             if(Modifier.isAbstract(m.getModifiers())) {

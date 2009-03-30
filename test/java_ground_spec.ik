@@ -85,7 +85,40 @@ describe("JavaGround",
   )
 
   describe("use of jar-files",
-    it("should have tests")
+    it("should make it possible to integrate on interfaces from the jar file",
+      use("test/jars/JarFileTest7.jar")
+      newClass = integrate(ioke:lang:test:JarFileTest7)
+      newClass new
+    )
+
+    it("should make it possible to integrate on classes from the jar file",
+      use("test/jars/JarFileTest2.jar")
+      newClass = integrate(ioke:lang:test:JarFileTest2)
+      newClass new
+    )
+
+    it("should make it possible to integrate on interfaces from two different jar-files that's been used",
+      use("test/jars/JarFileTest5.jar")
+      use("test/jars/JarFileTest6.jar")
+      newClass = integrate(ioke:lang:test:JarFileTest5, ioke:lang:test:JarFileTest6)
+      newClass new
+    )
+
+    it("should make it possible to use a type from a jar-file",
+      fn(ioke:lang:test:JarFileTest1 new) should signal(Condition Error NoSuchCell)
+      use("test/jars/JarFileTest1.jar")
+      ioke:lang:test:JarFileTest1 new should not be nil
+    )
+
+    it("should be possible to use a jar-file directly",
+      use("test/jars/JarFileTest3")
+      ioke:lang:test:JarFileTest3
+    )
+
+    it("should be possible to use the special 'use jar' style to point out a jar-file",
+      use jar("test/jars/JarFileTest4")
+      ioke:lang:test:JarFileTest4
+    )
   )
 )
 
@@ -1864,7 +1897,71 @@ describe("Java Objects",
 ;     it("should be possible to supply arguments by name")
   )
 
-  describe("working with arrays",
-    it("should have tests")
+  describe("arrays",
+    describe("byte",
+      it("should be possible to create a new array",
+        java:byte[10] new
+        java:byte[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:byte[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array")
+
+      it("should be possible to get the length of one",
+        java:byte[42] new length should == 42
+        java:byte[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:byte[5] new
+        x[0] asRational should == 0
+        x[1] asRational should == 0
+        x[2] asRational should == 0
+        x[3] asRational should == 0
+        x[4] asRational should == 0
+        x[3] = 55
+        x[3] asRational should == 55
+        x[-1] asRational should == 0
+        x[-2] asRational should == 55
+      )
+
+      it("should be possible to send the array as java argument")
+      it("should be possible to manually cast to the array")
+    )
+
+    describe("short",
+      it("should have tests")
+    )
+
+    describe("char",
+      it("should have tests")
+    )
+
+    describe("int",
+      it("should have tests")
+    )
+
+    describe("long",
+      it("should have tests")
+    )
+
+    describe("float",
+      it("should have tests")
+    )
+
+    describe("double",
+      it("should have tests")
+    )
+
+    describe("boolean",
+      it("should have tests")
+    )
+
+    describe("Object",
+      it("should have tests")
+    )
   )
 )

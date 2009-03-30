@@ -11,6 +11,62 @@ public class StringUtils {
     public StringUtils() {
     }
 
+    public String escape(String s) {
+        int len = s.length();
+        StringBuilder result = new StringBuilder(s.length());
+        for(int i=0;i<len;i++) {
+            char c = s.charAt(i);
+            switch(c) {
+            case '\\':
+                result.append(c).append(c);
+                break;
+            case '"':
+                result.append('\\').append(c);
+                break;
+            case '#':
+                if((i+1 < len) && s.charAt(i+1) == '{') {
+                    result.append('\\').append(c);
+                } else {
+                    result.append(c);
+                }
+                break;
+            case '\b':
+                result.append('\\').append('b');
+                break;
+            case '\f':
+                result.append('\\').append('f');
+                break;
+            case '\r':
+                result.append('\\').append('r');
+                break;
+            case '\t':
+                result.append('\\').append('t');
+                break;
+            case '\n':
+                result.append('\\').append('n');
+                break;
+            case 27:
+                result.append('\\').append('e');
+                break;
+            default:
+                if(c < 32) {
+                    result.append(String.format("\\%03o", Integer.valueOf(c)));
+                } else if(c > 126) {
+                    if(c > 255) {
+                        result.append(String.format("\\u%04X", Integer.valueOf(c)));
+                    } else {
+                        result.append(String.format("\\%03o", Integer.valueOf(c)));
+                    }
+                } else {
+                    result.append(c);
+                }
+                break;
+            }
+        }
+
+        return result.toString();
+    }
+
     public String replaceEscapes(String s) {
         if(s.indexOf('\\') == -1) {
             if(ioke.lang.IokeSystem.DOSISH) {
@@ -215,9 +271,6 @@ public class StringUtils {
                         }
                         // escaped newline means nothing.
                         break;
-                    case '\\':
-                        result.append(c);
-                        break;
                     case 'f':
                         result.append('\f');
                         break;
@@ -290,9 +343,6 @@ public class StringUtils {
                             i++;
                         }
                         // escaped newline means nothing.
-                        break;
-                    case '\\':
-                        result.append(c);
                         break;
                     case 'f':
                         result.append('\f');

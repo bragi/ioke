@@ -1133,6 +1133,251 @@ describe(List,
       List should checkReceiverTypeOn(:removeFirst!, 0)
     )
   )
+
+  describe("insert!",
+    it("inserts objects before the element at index for non-negative index",
+      ary = []
+      ary insert!(0, 3) should == ary
+      ary should == [3]
+
+      ary insert!(0, 1, 2) should == ary
+      ary should == [1, 2, 3]
+      ary insert!(0)
+      ary should == [1, 2, 3]
+      
+      ary insert!(1, :a) should == [1, :a, 2, 3]
+      ary insert!(0, :b) should == [:b, 1, :a, 2, 3]
+      ary insert!(5, :c) should == [:b, 1, :a, 2, 3, :c]
+      ary insert!(7, :d) should == [:b, 1, :a, 2, 3, :c, nil, :d]
+      ary insert!(10, 5, 4) should == [:b, 1, :a, 2, 3, :c, nil, :d, nil, nil, 5, 4]
+    )
+
+    it("appends objects to the end of the array for index == -1",
+      [1, 3, 3] insert!(-1, 2, :x, 5) should == [1, 3, 3, 2, :x, 5]
+    )
+
+    it("inserts objects after the element at index with negative index",
+      ary = []
+      ary insert!(-1, 3) should == [3]
+      ary insert!(-2, 2) should == [2, 3]
+      ary insert!(-3, 1) should == [1, 2, 3]
+      ary insert!(-2, -3) should == [1, 2, -3, 3]
+      ary insert!(-1, []) should == [1, 2, -3, 3, []]
+      ary insert!(-2, :x, :y) should == [1, 2, -3, 3, :x, :y, []]
+    )
+
+    it("pads with nils if the index to be inserted to is past the end",
+      [] insert!(5, 5) should == [nil, nil, nil, nil, nil, 5]
+    )
+
+    it("can insert before the first element with a negative index",
+      [1, 2, 3] insert!(-4, -3) should == [-3, 1, 2, 3]
+    )  
+  
+    it("raises an IndexError if the negative index is out of bounds",
+      fn([]  insert!(-2, 1)) should signal(Condition Error Index)
+      fn([1] insert!(-3, 2)) should signal(Condition Error Index)
+    )
+
+    it("does nothing if no object is passed",
+      [] insert!(0)  should == []
+      [] insert!(-1) should == []
+      [] insert!(10) should == []
+      [] insert!(-2) should == []
+    )
+  )
+
+  describe("append!",
+    it("should add an element to an empty list",
+      l = []
+      l append!(:foo)
+      l should == [:foo]
+    )
+
+    it("should add an element at the end of a list with elements in it",
+      l = [:foo, :bar, 1, 42]
+      l append!(:flax)
+      l should == [:foo, :bar, 1, 42, :flax]
+    )
+
+    it("should add an element several times if asked to",
+      l = [:foo]
+      l append!(:foo)
+      l append!(:foo)
+      l append!(:foo)
+      l append!(:foo)
+      l should == [:foo, :foo, :foo, :foo, :foo]
+    )
+
+    it("should return the list",
+      l = []
+      l append!(:foo) should == l
+    )
+
+    it("should validate type of receiver",
+      List should checkReceiverTypeOn(:append!, 0)
+    )
+  )
+
+  describe("prepend!",
+    it("should add an element to an empty list",
+      l = []
+      l prepend!(:foo)
+      l should == [:foo]
+    )
+
+    it("should add an element at the beginning of a list with elements in it",
+      l = [:foo, :bar, 1, 42]
+      l prepend!(:flax)
+      l should == [:flax, :foo, :bar, 1, 42]
+    )
+
+    it("should add an element several times if asked to",
+      l = [:foo]
+      l prepend!(:foo)
+      l prepend!(:foo)
+      l prepend!(:foo)
+      l prepend!(:foo)
+      l should == [:foo, :foo, :foo, :foo, :foo]
+    )
+
+    it("should return the list",
+      l = []
+      l prepend!(:foo) should == l
+    )
+
+    it("should validate type of receiver",
+      List should checkReceiverTypeOn(:prepend!, 0)
+    )
+  )
+
+  describe("shift!",
+    it("should return nil for an empty list",
+      [] shift! should be nil
+    )
+
+    it("should return the element for a list with one element",
+      [:blarg] shift! should == :blarg
+    )
+
+    it("should remove the element in a list with one element",
+      l = [:blarg]
+      l shift!
+      l should == []
+    )
+
+    it("should return the first element for a list with more than one element",
+      [:blem, :flag, :moppy] shift! should == :blem
+    )
+
+    it("should remove the first element in a list with more than one element",
+      l = [:blem, :flag, :moppy]
+      l shift!
+      l should == [:flag, :moppy]
+      l shift!
+      l should == [:moppy]
+    )
+
+    it("should validate type of receiver",
+      List should checkReceiverTypeOn(:shift!)
+    )
+  )
+
+  describe("unshift!",
+    it("should add an element to an empty list",
+      l = []
+      l unshift!(:foo)
+      l should == [:foo]
+    )
+
+    it("should add an element at the beginning of a list with elements in it",
+      l = [:foo, :bar, 1, 42]
+      l unshift!(:flax)
+      l should == [:flax, :foo, :bar, 1, 42]
+    )
+
+    it("should add an element several times if asked to",
+      l = [:foo]
+      l unshift!(:foo)
+      l unshift!(:foo)
+      l unshift!(:foo)
+      l unshift!(:foo)
+      l should == [:foo, :foo, :foo, :foo, :foo]
+    )
+
+    it("should return the list",
+      l = []
+      l unshift!(:foo) should == l
+    )
+
+    it("should validate type of receiver",
+      List should checkReceiverTypeOn(:unshift!, 0)
+    )
+  )
+
+  describe("push!",
+    it("should add an element to an empty list",
+      l = []
+      l push!(:foo)
+      l should == [:foo]
+    )
+
+    it("should add an element at the end of a list with elements in it",
+      l = [:foo, :bar, 1, 42]
+      l push!(:flax)
+      l should == [:foo, :bar, 1, 42, :flax]
+    )
+
+    it("should add an element several times if asked to",
+      l = [:foo]
+      l push!(:foo)
+      l push!(:foo)
+      l push!(:foo)
+      l push!(:foo)
+      l should == [:foo, :foo, :foo, :foo, :foo]
+    )
+
+    it("should return the list",
+      l = []
+      l push!(:foo) should == l
+    )
+
+    it("should validate type of receiver",
+      List should checkReceiverTypeOn(:push!, 0)
+    )
+  )
+
+  describe("pop!",
+    it("should return nil for an empty list",
+      [] pop! should be nil
+    )
+
+    it("should return the element for a list with one element",
+      [:blarg] pop! should == :blarg
+    )
+
+    it("should remove the element in a list with one element",
+      l = [:blarg]
+      l pop!
+      l should == []
+    )
+
+    it("should return the last element for a list with more than one element",
+      [:blem, :flag, :moppy] pop! should == :moppy
+    )
+
+    it("should remove the last element in a list with more than one element",
+      l = [:blem, :flag, :moppy]
+      l pop!
+      l should == [:blem, :flag]
+      l pop!
+      l should == [:blem]
+    )
+
+    it("should validate type of receiver",
+      List should checkReceiverTypeOn(:pop!)
+    )
+  )
 )
 
 describe("DefaultBehavior", 

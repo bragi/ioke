@@ -8,13 +8,21 @@ JavaGround java:lang:String = JavaGround primitiveJavaClass!("java.lang.String")
 JavaGround java:lang:Integer = JavaGround primitiveJavaClass!("java.lang.Integer")
 JavaGround java:lang:Short = JavaGround primitiveJavaClass!("java.lang.Short")
 JavaGround java:lang:Byte = JavaGround primitiveJavaClass!("java.lang.Byte")
+JavaGround java:lang:Boolean = JavaGround primitiveJavaClass!("java.lang.Boolean")
 JavaGround java:lang:Character = JavaGround primitiveJavaClass!("java.lang.Character")
 JavaGround java:lang:Long = JavaGround primitiveJavaClass!("java.lang.Long")
 JavaGround java:lang:Float = JavaGround primitiveJavaClass!("java.lang.Float")
 JavaGround java:lang:Double = JavaGround primitiveJavaClass!("java.lang.Double")
 JavaGround java:lang:reflect:Array = JavaGround primitiveJavaClass!("java.lang.reflect.Array")
 
-JavaGround java:byte = java:lang:Byte field:TYPE
+JavaGround java:byte  =      java:lang:Byte field:TYPE
+JavaGround java:short =     java:lang:Short field:TYPE
+JavaGround java:char  = java:lang:Character field:TYPE
+JavaGround java:int   =   java:lang:Integer field:TYPE
+JavaGround java:long  =      java:lang:Long field:TYPE
+JavaGround java:boolean = java:lang:Boolean field:TYPE
+JavaGround java:float  =    java:lang:Float field:TYPE
+JavaGround java:double =   java:lang:Double field:TYPE
 
 JavaGround java:lang:String asText = JavaGround cell("primitiveMagic: String->Text")
 JavaGround java:lang:Integer asRational = JavaGround cell("primitiveMagic: Integer->Rational")
@@ -55,11 +63,38 @@ JavaGround JavaArrayProxyCreator = Origin mimic do(
 JavaGround java:lang:Class [] = method(dimension nil,
   ; if dimension is nil, we want the class, otherwise we want a proxy creator
   if(dimension,
-    JavaArrayProxyCreator mimic(self, nil[dimension])
-    ,
-    nil
+    JavaArrayProxyCreator mimic(self, nil[dimension]),
+    dimension = 0
+    clz = self
+    while(clz class:array?,
+      dimension++
+      clz = clz:componentType)
+
+    baseType = if(clz class:array?,
+      clz class:componentType,
+      clz)
+    
+    dimension++
+    dims = list()
+    dimension times(dims << 0)
+    createPrimitiveJavaArray!(baseType, *dims) class
   )
 )
+
+JavaGround JavaArray each = dmacro(
+  [code]
+  (0...self length) each(n, code evaluateOn(call ground, self[n]))
+  self,
+
+  [argName, code]
+  lexical = call LexicalBlock createFrom(call list(argName, code), call ground)
+  (0...self length) each(n, lexical call(self[n]))
+  self,
+
+  [indexName, argName, code]
+  lexical = call LexicalBlock createFrom(call list(indexName, argName, code), call ground)
+  (0...self length) each(n, lexical call(n, self[n]))
+  self)
 
 JavaGround pass = macro(
   ; JavaGround really doesn't have access to much, so we scope every call to anything inside "call"

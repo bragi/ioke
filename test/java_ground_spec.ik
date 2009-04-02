@@ -194,6 +194,17 @@ describe("Java Objects",
           i cell?("field:publicIntFieldFinal=") should be false
         )
 
+        it("should handle a simple byte field",
+          i = ioke:lang:test:StaticFields
+          i field:publicByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:StaticFields
+          i cell?("field:publicByteField=") should be true
+          i cell?("field:publicByteFieldFinal=") should be false
+        )
+
         it("should handle a simple short field",
           i = ioke:lang:test:StaticFields
           i field:publicShortFieldFinal asRational should == 13
@@ -282,6 +293,13 @@ describe("Java Objects",
         i get_publicIntField asRational should == 42
       )
 
+      it("should handle a simple byte field",
+        i = ioke:lang:test:StaticFields
+        i field:publicByteField asRational should == 0
+        i field:publicByteField = 12
+        i get_publicByteField asRational should == 12
+      )
+
       it("should handle a simple short field",
         i = ioke:lang:test:StaticFields
         i field:publicShortField asRational should == 0
@@ -353,6 +371,17 @@ describe("Java Objects",
           i = ioke:lang:test:StaticFields
           i cell?("field:protectedIntField=") should be true
           i cell?("field:protectedIntFieldFinal=") should be false
+        )
+
+        it("should handle a simple byte field",
+          i = ioke:lang:test:StaticFields
+          i field:protectedByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:StaticFields
+          i cell?("field:protectedByteField=") should be true
+          i cell?("field:protectedByteFieldFinal=") should be false
         )
 
         it("should handle a simple short field",
@@ -443,6 +472,13 @@ describe("Java Objects",
         i get_protectedIntField asRational should == 42
       )
 
+      it("should handle a simple byte field",
+        i = ioke:lang:test:StaticFields
+        i field:protectedByteField asRational should == 0
+        i field:protectedByteField = 12
+        i get_protectedByteField asRational should == 12
+      )
+
       it("should handle a simple short field",
         i = ioke:lang:test:StaticFields
         i field:protectedShortField asRational should == 0
@@ -514,6 +550,17 @@ describe("Java Objects",
           i = ioke:lang:test:StaticFields
           i cell?("field:packagePrivateIntField=") should be true
           i cell?("field:packagePrivateIntFieldFinal=") should be false
+        )
+
+        it("should handle a simple byte field",
+          i = ioke:lang:test:StaticFields
+          i field:packagePrivateByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:StaticFields
+          i cell?("field:packagePrivateByteField=") should be true
+          i cell?("field:packagePrivateByteFieldFinal=") should be false
         )
 
         it("should handle a simple short field",
@@ -604,6 +651,13 @@ describe("Java Objects",
         i get_packagePrivateIntField asRational should == 42
       )
 
+      it("should handle a simple byte field",
+        i = ioke:lang:test:StaticFields
+        i field:packagePrivateByteField asRational should == 0
+        i field:packagePrivateByteField = 12
+        i get_packagePrivateByteField asRational should == 12
+      )
+
       it("should handle a simple short field",
         i = ioke:lang:test:StaticFields
         i field:packagePrivateShortField asRational should == 0
@@ -676,6 +730,17 @@ describe("Java Objects",
           i = ioke:lang:test:StaticFields
           i cell?("field:privateIntField=") should be true
           i cell?("field:privateIntFieldFinal=") should be false
+        )
+
+        it("should handle a simple byte field",
+          i = ioke:lang:test:StaticFields
+          i field:privateByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:StaticFields
+          i cell?("field:privateByteField=") should be true
+          i cell?("field:privateByteFieldFinal=") should be false
         )
 
         it("should handle a simple short field",
@@ -764,6 +829,13 @@ describe("Java Objects",
         i field:privateIntField asRational should == 0
         i field:privateIntField = 42
         i get_privateIntField asRational should == 42
+      )
+
+      it("should handle a simple byte field",
+        i = ioke:lang:test:StaticFields
+        i field:privateByteField asRational should == 0
+        i field:privateByteField = 12
+        i get_privateByteField asRational should == 12
       )
 
       it("should handle a simple short field",
@@ -841,6 +913,17 @@ describe("Java Objects",
           i cell?("field:publicIntFieldFinal=") should be false
         )
 
+        it("should handle a simple byte field",
+          i = ioke:lang:test:InstanceFields new
+          i field:publicByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:InstanceFields new
+          i cell?("field:publicByteField=") should be true
+          i cell?("field:publicByteFieldFinal=") should be false
+        )
+
         it("should handle a simple short field",
           i = ioke:lang:test:InstanceFields new
           i field:publicShortFieldFinal asRational should == 13
@@ -929,6 +1012,13 @@ describe("Java Objects",
         i get_publicIntField asRational should == 42
       )
 
+      it("should handle a simple byte field",
+        i = ioke:lang:test:InstanceFields new
+        i field:publicByteField asRational should == 0
+        i field:publicByteField = 12
+        i get_publicByteField asRational should == 12
+      )
+
       it("should handle a simple short field",
         i = ioke:lang:test:InstanceFields new
         i field:publicShortField asRational should == 0
@@ -1000,6 +1090,17 @@ describe("Java Objects",
           i = ioke:lang:test:InstanceFields new
           i cell?("field:protectedIntField=") should be true
           i cell?("field:protectedIntFieldFinal=") should be false
+        )
+
+        it("should handle a simple byte field",
+          i = ioke:lang:test:InstanceFields new
+          i field:protectedByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:InstanceFields new
+          i cell?("field:protectedByteField=") should be true
+          i cell?("field:protectedByteFieldFinal=") should be false
         )
 
         it("should handle a simple short field",
@@ -1090,6 +1191,13 @@ describe("Java Objects",
         i get_protectedIntField asRational should == 42
       )
 
+      it("should handle a simple byte field",
+        i = ioke:lang:test:InstanceFields new
+        i field:protectedByteField asRational should == 0
+        i field:protectedByteField = 12
+        i get_protectedByteField asRational should == 12
+      )
+
       it("should handle a simple short field",
         i = ioke:lang:test:InstanceFields new
         i field:protectedShortField asRational should == 0
@@ -1161,6 +1269,17 @@ describe("Java Objects",
           i = ioke:lang:test:InstanceFields new
           i cell?("field:packagePrivateIntField=") should be true
           i cell?("field:packagePrivateIntFieldFinal=") should be false
+        )
+
+        it("should handle a simple byte field",
+          i = ioke:lang:test:InstanceFields new
+          i field:packagePrivateByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:InstanceFields new
+          i cell?("field:packagePrivateByteField=") should be true
+          i cell?("field:packagePrivateByteFieldFinal=") should be false
         )
 
         it("should handle a simple short field",
@@ -1251,6 +1370,13 @@ describe("Java Objects",
         i get_packagePrivateIntField asRational should == 42
       )
 
+      it("should handle a simple byte field",
+        i = ioke:lang:test:InstanceFields new
+        i field:packagePrivateByteField asRational should == 0
+        i field:packagePrivateByteField = 12
+        i get_packagePrivateByteField asRational should == 12
+      )
+
       it("should handle a simple short field",
         i = ioke:lang:test:InstanceFields new
         i field:packagePrivateShortField asRational should == 0
@@ -1323,6 +1449,17 @@ describe("Java Objects",
           i = ioke:lang:test:InstanceFields new
           i cell?("field:privateIntField=") should be true
           i cell?("field:privateIntFieldFinal=") should be false
+        )
+
+        it("should handle a simple byte field",
+          i = ioke:lang:test:InstanceFields new
+          i field:privateByteFieldFinal asRational should == 13
+        )
+
+        it("should not have a setter for the byte field",
+          i = ioke:lang:test:InstanceFields new
+          i cell?("field:privateByteField=") should be true
+          i cell?("field:privateByteFieldFinal=") should be false
         )
 
         it("should handle a simple short field",
@@ -1411,6 +1548,13 @@ describe("Java Objects",
         i field:privateIntField asRational should == 0
         i field:privateIntField = 42
         i get_privateIntField asRational should == 42
+      )
+
+      it("should handle a simple byte field",
+        i = ioke:lang:test:InstanceFields new
+        i field:privateByteField asRational should == 0
+        i field:privateByteField = 12
+        i get_privateByteField asRational should == 12
       )
 
       it("should handle a simple short field",
@@ -1514,6 +1658,13 @@ describe("Java Objects",
 
     it("should coerce something else correctly to Object",
       ioke:lang:test:StaticMethods overloaded(1..42) asText should == "overloaded(Object)"
+    )
+
+    it("should be possible to manually coerce into a byte argument",
+      ioke:lang:test:StaticMethods overloaded((byte)102) asText should == "overloaded(byte)"
+      ioke:lang:test:StaticMethods overloaded((byte)102, false) asText should == "overloaded(byte, boolean)"
+      ioke:lang:test:StaticMethods overloaded(123, (byte)42) asText should == "overloaded(int, byte)"
+      ioke:lang:test:StaticMethods overloaded((byte)123, (byte)42) asText should == "overloaded(byte, byte)"
     )
 
     it("should be possible to manually coerce into a short argument",
@@ -1680,6 +1831,14 @@ describe("Java Objects",
     it("should coerce something else correctly to Object",
       i = ioke:lang:test:InstanceMethods new
       i overloaded(1..42) asText should == "overloaded(Object)"
+    )
+
+    it("should be possible to manually coerce into a byte argument",
+      i = ioke:lang:test:InstanceMethods new
+      i overloaded((byte)102) asText should == "overloaded(byte)"
+      i overloaded((byte)102, false) asText should == "overloaded(byte, boolean)"
+      i overloaded(123, (byte)42) asText should == "overloaded(int, byte)"
+      i overloaded((byte)123, (byte)42) asText should == "overloaded(byte, byte)"
     )
 
     it("should be possible to manually coerce into a short argument",
@@ -1851,6 +2010,10 @@ describe("Java Objects",
       ioke:lang:test:Constructors new(1..40) getData asText should == "Constructors(Object)"
     )
 
+    it("should be possible to manually coerce into a byte argument",
+      ioke:lang:test:Constructors new( (byte) 4242 ) getData asText should == "Constructors(byte)"
+    )
+
     it("should be possible to manually coerce into a short argument",
       ioke:lang:test:Constructors new( (short) 4242 ) getData asText should == "Constructors(short)"
     )
@@ -1908,7 +2071,27 @@ describe("Java Objects",
         java:byte[10][10] new
       )
 
-      it("should be possible to coerce a List into an array")
+      it("should be possible to coerce a List into an array",
+        x = java:byte[] from([1,2,3,42,0])
+        x[0] asRational should == 1
+        x[1] asRational should == 2
+        x[2] asRational should == 3
+        x[3] asRational should == 42
+        x[4] asRational should == 0
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:byte[5] new
+        x[3] = 42
+        x[2] = 40
+        y = x asList
+        y should have kind("List")
+        y[0] asRational should == 0
+        y[1] asRational should == 0
+        y[2] asRational should == 40
+        y[3] asRational should == 42
+        y[4] asRational should == 0
+      )
 
       it("should be possible to get the length of one",
         java:byte[42] new length should == 42
@@ -1928,40 +2111,661 @@ describe("Java Objects",
         x[-2] asRational should == 55
       )
 
-      it("should be possible to send the array as java argument")
-      it("should be possible to manually cast to the array")
+      it("should be possible to send the array as java argument",
+        x = java:byte[5] new
+        x[3] = 42
+        ioke:lang:test:ArrayUser byteUse(x, 3) asRational should == 42
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:byte[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "byte[]"
+        ioke:lang:test:ArrayUser use((java:byte[])x) asText should == "byte[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("short",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:short[10] new
+        java:short[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:short[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:short[] from([1,2,3,42,0])
+        x[0] asRational should == 1
+        x[1] asRational should == 2
+        x[2] asRational should == 3
+        x[3] asRational should == 42
+        x[4] asRational should == 0
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:short[5] new
+        x[3] = 42
+        x[2] = 40
+        y = x asList
+        y should have kind("List")
+        y[0] asRational should == 0
+        y[1] asRational should == 0
+        y[2] asRational should == 40
+        y[3] asRational should == 42
+        y[4] asRational should == 0
+      )
+
+      it("should be possible to get the length of one",
+        java:short[42] new length should == 42
+        java:short[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:short[5] new
+        x[0] asRational should == 0
+        x[1] asRational should == 0
+        x[2] asRational should == 0
+        x[3] asRational should == 0
+        x[4] asRational should == 0
+        x[3] = 55
+        x[3] asRational should == 55
+        x[-1] asRational should == 0
+        x[-2] asRational should == 55
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:short[5] new
+        x[3] = 42
+        ioke:lang:test:ArrayUser shortUse(x, 3) asRational should == 42
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:short[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "short[]"
+        ioke:lang:test:ArrayUser use((java:short[])x) asText should == "short[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("char",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:char[10] new
+        java:char[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:char[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:char[] from([1,2,3,42,0])
+        x[0] asRational should == 1
+        x[1] asRational should == 2
+        x[2] asRational should == 3
+        x[3] asRational should == 42
+        x[4] asRational should == 0
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:char[5] new
+        x[3] = 42
+        x[2] = 40
+        y = x asList
+        y should have kind("List")
+        y[0] asRational should == 0
+        y[1] asRational should == 0
+        y[2] asRational should == 40
+        y[3] asRational should == 42
+        y[4] asRational should == 0
+      )
+
+      it("should be possible to get the length of one",
+        java:char[42] new length should == 42
+        java:char[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:char[5] new
+        x[0] asRational should == 0
+        x[1] asRational should == 0
+        x[2] asRational should == 0
+        x[3] asRational should == 0
+        x[4] asRational should == 0
+        x[3] = 55
+        x[3] asRational should == 55
+        x[-1] asRational should == 0
+        x[-2] asRational should == 55
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:char[5] new
+        x[3] = 42
+        ioke:lang:test:ArrayUser charUse(x, 3) asRational should == 42
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:char[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "char[]"
+        ioke:lang:test:ArrayUser use((java:char[])x) asText should == "char[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("int",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:int[10] new
+        java:int[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:int[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:int[] from([1,2,3,42,0])
+        x[0] asRational should == 1
+        x[1] asRational should == 2
+        x[2] asRational should == 3
+        x[3] asRational should == 42
+        x[4] asRational should == 0
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:int[5] new
+        x[3] = 42
+        x[2] = 40
+        y = x asList
+        y should have kind("List")
+        y[0] asRational should == 0
+        y[1] asRational should == 0
+        y[2] asRational should == 40
+        y[3] asRational should == 42
+        y[4] asRational should == 0
+      )
+
+      it("should be possible to get the length of one",
+        java:int[42] new length should == 42
+        java:int[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:int[5] new
+        x[0] asRational should == 0
+        x[1] asRational should == 0
+        x[2] asRational should == 0
+        x[3] asRational should == 0
+        x[4] asRational should == 0
+        x[3] = 55
+        x[3] asRational should == 55
+        x[-1] asRational should == 0
+        x[-2] asRational should == 55
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:int[5] new
+        x[3] = 42
+        ioke:lang:test:ArrayUser intUse(x, 3) asRational should == 42
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:int[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "int[]"
+        ioke:lang:test:ArrayUser use((java:int[])x) asText should == "int[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("long",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:long[10] new
+        java:long[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:long[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:long[] from([1,2,3,42,0])
+        x[0] asRational should == 1
+        x[1] asRational should == 2
+        x[2] asRational should == 3
+        x[3] asRational should == 42
+        x[4] asRational should == 0
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:long[5] new
+        x[3] = 42
+        x[2] = 40
+        y = x asList
+        y should have kind("List")
+        y[0] asRational should == 0
+        y[1] asRational should == 0
+        y[2] asRational should == 40
+        y[3] asRational should == 42
+        y[4] asRational should == 0
+      )
+
+      it("should be possible to get the length of one",
+        java:long[42] new length should == 42
+        java:long[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:long[5] new
+        x[0] asRational should == 0
+        x[1] asRational should == 0
+        x[2] asRational should == 0
+        x[3] asRational should == 0
+        x[4] asRational should == 0
+        x[3] = 55
+        x[3] asRational should == 55
+        x[-1] asRational should == 0
+        x[-2] asRational should == 55
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:long[5] new
+        x[3] = 42
+        ioke:lang:test:ArrayUser longUse(x, 3) asRational should == 42
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:long[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "long[]"
+        ioke:lang:test:ArrayUser use((java:long[])x) asText should == "long[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("float",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:float[10] new
+        java:float[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:float[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:float[] from([1.0,2.0,3.0,42.0,0.0])
+        x[0] asDecimal should be close(1.0)
+        x[1] asDecimal should be close(2.0)
+        x[2] asDecimal should be close(3.0)
+        x[3] asDecimal should be close(42.0)
+        x[4] asDecimal should be close(0.0)
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:float[5] new
+        x[3] = 42.0
+        x[2] = 40.0
+        y = x asList
+        y should have kind("List")
+        y[0] asDecimal should be close(0.0)
+        y[1] asDecimal should be close(0.0)
+        y[2] asDecimal should be close(40.0)
+        y[3] asDecimal should be close(42.0)
+        y[4] asDecimal should be close(0.0)
+      )
+
+      it("should be possible to get the length of one",
+        java:float[42] new length should == 42
+        java:float[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:float[5] new
+        x[0] asDecimal should be close(0.0)
+        x[1] asDecimal should be close(0.0)
+        x[2] asDecimal should be close(0.0)
+        x[3] asDecimal should be close(0.0)
+        x[4] asDecimal should be close(0.0)
+        x[3] = 55.0
+        x[3] asDecimal should be close(55.0)
+        x[-1] asDecimal should be close(0.0)
+        x[-2] asDecimal should be close(55.0)
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:float[5] new
+        x[3] = 42.0
+        ioke:lang:test:ArrayUser floatUse(x, 3) asDecimal should be close(42.0)
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:float[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "float[]"
+        ioke:lang:test:ArrayUser use((java:float[])x) asText should == "float[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("double",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:double[10] new
+        java:double[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:double[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:double[] from([1.0,2.0,3.0,42.0,0.0])
+        x[0] asDecimal should be close(1.0)
+        x[1] asDecimal should be close(2.0)
+        x[2] asDecimal should be close(3.0)
+        x[3] asDecimal should be close(42.0)
+        x[4] asDecimal should be close(0.0)
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:double[5] new
+        x[3] = 42.0
+        x[2] = 40.0
+        y = x asList
+        y should have kind("List")
+        y[0] asDecimal should be close(0.0)
+        y[1] asDecimal should be close(0.0)
+        y[2] asDecimal should be close(40.0)
+        y[3] asDecimal should be close(42.0)
+        y[4] asDecimal should be close(0.0)
+      )
+
+      it("should be possible to get the length of one",
+        java:double[42] new length should == 42
+        java:double[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:double[5] new
+        x[0] asDecimal should be close(0.0)
+        x[1] asDecimal should be close(0.0)
+        x[2] asDecimal should be close(0.0)
+        x[3] asDecimal should be close(0.0)
+        x[4] asDecimal should be close(0.0)
+        x[3] = 55.0
+        x[3] asDecimal should be close(55.0)
+        x[-1] asDecimal should be close(0.0)
+        x[-2] asDecimal should be close(55.0)
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:double[5] new
+        x[3] = 42.0
+        ioke:lang:test:ArrayUser doubleUse(x, 3) asDecimal should be close(42.0)
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:double[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "double[]"
+        ioke:lang:test:ArrayUser use((java:double[])x) asText should == "double[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("boolean",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:boolean[10] new
+        java:boolean[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:boolean[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:boolean[] from([true,false,false,true,true])
+        x[0] should be true
+        x[1] should be false
+        x[2] should be false
+        x[3] should be true
+        x[4] should be true
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:boolean[5] new
+        x[3] = true
+        x[2] = true
+        y = x asList
+        y should have kind("List")
+        y[0] should be false
+        y[1] should be false
+        y[2] should be true
+        y[3] should be true
+        y[4] should be false
+      )
+
+      it("should be possible to get the length of one",
+        java:boolean[42] new length should == 42
+        java:boolean[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:boolean[5] new
+        x[0] should be false
+        x[1] should be false
+        x[2] should be false
+        x[3] should be false
+        x[4] should be false
+        x[3] = true
+        x[3] should be true
+        x[-1] should be false
+        x[-2] should be true
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:boolean[5] new
+        x[3] = true
+        ioke:lang:test:ArrayUser booleanUse(x, 3) should == true
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:boolean[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "boolean[]"
+        ioke:lang:test:ArrayUser use((java:boolean[])x) asText should == "boolean[]"
+;         ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
 
     describe("Object",
-      it("should have tests")
+      it("should be possible to create a new array",
+        java:lang:Object[10] new
+        java:lang:Object[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:lang:Object[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:lang:Object[] from(["blah", "blurg", "blerg", nil])
+        x[0] should == "blah"
+        x[1] should == "blurg" 
+        x[2] should == "blerg"
+        x[3] should be nil 
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:lang:Object[5] new
+        x[3] = "blaha"
+        x[2] = "mux"
+        y = x asList
+        y should have kind("List")
+        y[0] should be nil
+        y[1] should be nil
+        y[2] should == "mux"
+        y[3] should == "blaha"
+        y[4] should be nil
+      )
+
+      it("should be possible to get the length of one",
+        java:lang:Object[42] new length should == 42
+        java:lang:Object[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:lang:Object[5] new
+        x[0] should be nil
+        x[1] should be nil
+        x[2] should be nil
+        x[3] should be nil
+        x[4] should be nil
+        x[3] = 123
+        x[3] should == 123
+        x[-1] should be nil
+        x[-2] should == 123
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:lang:Object[5] new
+        x[3] = :haha
+        ioke:lang:test:ArrayUser objectUse(x, 3) should == :haha
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:lang:Object[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "Object[]"
+        ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
+    )
+
+    describe("String",
+      it("should be possible to create a new array",
+        java:lang:String[10] new
+        java:lang:String[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:lang:String[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        x = java:lang:String[] from(["foo", "bar", "flux", nil])
+        x[0] asText should == "foo"
+        x[1] asText should == "bar"
+        x[2] asText should == "flux"
+        x[3] should be nil
+      )
+
+      it("should be possible to convert an array into a List",
+        x = java:lang:String[5] new
+        x[3] = "flem"
+        x[2] = "mix"
+        y = x asList
+        y should have kind("List")
+        y[0] should be nil
+        y[1] should be nil
+        y[2] asText should == "mix"
+        y[3] asText should == "flem"
+        y[4] should be nil
+      )
+
+      it("should be possible to get the length of one",
+        java:lang:String[42] new length should == 42
+        java:lang:String[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:lang:String[5] new
+        x[0] should be nil
+        x[1] should be nil
+        x[2] should be nil
+        x[3] should be nil
+        x[4] should be nil
+        x[3] = "hello!"
+        x[3] asText should == "hello!"
+        x[-1] should be nil
+        x[-2] asText should == "hello!"
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:lang:String[5] new
+        x[3] = "blarg"
+        ioke:lang:test:ArrayUser stringUse(x, 3) asText should == "blarg"
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:lang:String[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "String[]"
+        ioke:lang:test:ArrayUser use((java:lang:String[])x) asText should == "String[]"
+        ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
+    )
+
+    describe("java:util:Map",
+      it("should be possible to create a new array",
+        java:util:Map[10] new
+        java:util:Map[0] new
+      )
+
+      it("should be possible to create a nested array",
+        java:util:Map[10][10] new
+      )
+
+      it("should be possible to coerce a List into an array",
+        one = java:util:HashMap new
+        two = java:util:HashMap new
+        three = java:util:HashMap new
+        x = java:util:Map[] from([one, two, three, nil])
+        x[0] should be same(one)
+        x[1] should be same(two)
+        x[2] should be same(three)
+        x[3] should be nil
+      )
+
+      it("should be possible to convert an array into a List",
+        one = java:util:HashMap new
+        two = java:util:HashMap new
+        x = java:util:Map[5] new
+        x[3] = one
+        x[2] = two
+        y = x asList
+        y should have kind("List")
+        y[0] should be nil
+        y[1] should be nil
+        y[2] should be same(two)
+        y[3] should be same(one)
+        y[4] should be nil
+      )
+
+      it("should be possible to get the length of one",
+        java:util:Map[42] new length should == 42
+        java:util:Map[5][8] new length should == 5
+      )
+
+      it("should be possible to get and set values in the array",
+        x = java:util:Map[5] new
+        x[0] should be nil
+        x[1] should be nil
+        x[2] should be nil
+        x[3] should be nil
+        x[4] should be nil
+        mm = java:util:HashMap new
+        x[3] = mm
+        x[3] should be same(mm)
+        x[-1] should be nil
+        x[-2] should be same(mm)
+      )
+
+      it("should be possible to send the array as java argument",
+        x = java:util:Map[5] new
+        mm = java:util:HashMap new
+        x[3] = mm
+        ioke:lang:test:ArrayUser mapUse(x, 3) should be same(mm)
+      )
+
+      it("should be possible to manually cast to the array",
+        x = java:util:Map[5] new
+        ioke:lang:test:ArrayUser use(x) asText should == "Map[]"
+        ioke:lang:test:ArrayUser use((java:util:Map[])x) asText should == "Map[]"
+        ioke:lang:test:ArrayUser use((java:lang:Object[])x) asText should == "Object[]"
+      )
     )
   )
 )

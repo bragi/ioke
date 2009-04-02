@@ -287,7 +287,45 @@ describe("JavaGround",
       )
 
       describe("taking arguments",
-        it("should have tests")
+        it("should be possible to implement an interface method",
+          Obj = integrate(ioke:lang:test:ArgumentVoidInterface)
+          Obj doSomething = method(x, self theData = x)
+          Obj getData = method(self theData)
+
+          OtherObj = Obj mimic
+          OtherObj doSomething = method(x, self theData = "blarg")
+
+          ioke:lang:test:ArgumentUser useVoidInterface(Obj new) asText should == "max"
+          ioke:lang:test:ArgumentUser useVoidInterface(OtherObj new) asText should == "blarg"
+        )
+
+        it("should be possible to override a class method",
+          Obj = integrate(ioke:lang:test:ArgumentVoidClass)
+          SecondObj = Obj mimic
+          SecondObj doTheThing = method(x, self theData = x)
+          SecondObj getData = method(self theData)
+
+          OtherObj = SecondObj mimic
+          OtherObj doTheThing = method(x, self theData = "blarg")
+
+          ioke:lang:test:ArgumentUser useVoidClass(Obj new) asText should == "maxfoo"
+          ioke:lang:test:ArgumentUser useVoidClass(SecondObj new) asText should == "max"
+          ioke:lang:test:ArgumentUser useVoidClass(OtherObj new) asText should == "blarg"
+        )
+
+        it("should be possible to override an overloaded method on an interface",
+          Obj = integrate(ioke:lang:test:DoubleArgumentVoidInterface)
+          Obj doSomething = method(x, y nil, if(y, y = y asText). self theData = nil[x asText, y])
+          Obj getData = method(self theData)
+
+          OtherObj = Obj mimic
+          OtherObj doSomething = method(x, y nil, self theData = "blarg")
+
+          ioke:lang:test:ArgumentUser useDoubleVoidInterface(Obj new) should == ["max", nil]
+          ioke:lang:test:ArgumentUser useDoubleVoidInterface(OtherObj new) asText should == "blarg"
+          ioke:lang:test:ArgumentUser useDoubleVoidInterface2(Obj new) should == ["max", "blex"]
+          ioke:lang:test:ArgumentUser useDoubleVoidInterface2(OtherObj new) asText should == "blarg"
+        )
       )
     )
 

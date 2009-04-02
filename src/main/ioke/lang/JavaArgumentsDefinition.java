@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -46,28 +47,34 @@ public class JavaArgumentsDefinition {
             // Third is when there is no real ordering between them
 
             // Primitive linearization:
-            //  rationals:  int < character < long < short
+            //  rationals:  int < character < long < short < byte
             //  reals:      double < float
             if(a == b) {
                 // if they are the same we don't care.
                 return 0;
             } else if(a.isPrimitive() && b.isPrimitive()) {
                 if(a == Integer.TYPE) {
-                    if(b == Short.TYPE || b == Character.TYPE || b == Long.TYPE) {
+                    if(b == Short.TYPE || b == Character.TYPE || b == Long.TYPE || b == Byte.TYPE) {
                         return -1;
                     }
                 } else if(a == Short.TYPE) {
                     if(b == Long.TYPE || b == Integer.TYPE || b == Character.TYPE) {
                         return 1;
+                    } else if(b == Byte.TYPE) {
+                        return -1;
+                    }
+                } else if(a == Byte.TYPE) {
+                    if(b == Short.TYPE || b == Long.TYPE || b == Integer.TYPE || b == Character.TYPE) {
+                        return 1;
                     }
                 } else if(a == Character.TYPE) {
-                    if(b == Long.TYPE || b == Short.TYPE) {
+                    if(b == Long.TYPE || b == Short.TYPE || b == Byte.TYPE) {
                         return -1;
                     } else if(b == Integer.TYPE) {
                         return 1;
                     }
                 } else if(a == Long.TYPE) {
-                    if(b == Short.TYPE) {
+                    if(b == Short.TYPE || b == Byte.TYPE) {
                         return -1;
                     } else if(b == Integer.TYPE || b == Character.TYPE) {
                         return 1;
@@ -276,11 +283,13 @@ public class JavaArgumentsDefinition {
                     }
                     argCount += outp.size();
                 }
-            } else if(Message.hasName(o, "") && IokeObject.as(o, context).getArguments().size() == 1) { // Splat
-                String name = Message.name(IokeObject.as(o, context).getArguments().get(0)).intern();
+            } else if(Message.hasName(o, "") && IokeObject.as(o, context).getArguments().size() == 1) {
+                Object m = IokeObject.as(o, context).getArguments().get(0);
+                String name = Message.name(m).intern();
                 Object result = Message.getEvaluatedArgument(Message.next(o), context);
                 Class into = null;
                 Class alt = null;
+                // TODO: make these handle native arrays too
                 if(name == "Object") {
                     into = Object.class;
                 } else if(name == "String") {
@@ -293,6 +302,9 @@ public class JavaArgumentsDefinition {
                 } else if(name == "short") {
                     into = Short.TYPE;
                     alt = Short.class;
+                } else if(name == "byte") {
+                    into = Byte.TYPE;
+                    alt = Byte.class;
                 } else if(name == "boolean") {
                     into = Boolean.TYPE;
                     alt = Boolean.class;
@@ -316,6 +328,21 @@ public class JavaArgumentsDefinition {
                         into = null;
                     }
                 }
+
+                if(into != null) {
+                    int dimensions = 0;
+                    IokeObject next = Message.next(m);
+                    while(next != null && next.getName().equals("[]")) {
+                        dimensions++;
+                        next = Message.next(next);
+                    }
+                    if(dimensions > 0) {
+                        int[] ds = new int[dimensions];
+                        into = Array.newInstance(into, ds).getClass();
+                        alt = null;
+                    }
+                }
+
                 resultArguments.add(new JavaArgumentDefinition(into, alt, result));
                 argCount++;
             } else {
@@ -404,6 +431,20 @@ public class JavaArgumentsDefinition {
                             args.clear();
                             continue nextMethod;
                         }
+                    } else if(clz == Byte.class || clz == Byte.TYPE) {
+                        // This should take into account widening and stuff like that later
+                        if(obj instanceof Byte) {
+                            args.add(obj);
+                        } else if(isWrapper && JavaWrapper.getObject(obj) instanceof Byte) {
+                            args.add(JavaWrapper.getObject(obj));
+                        } else if(isIokeObject && IokeObject.data(obj) instanceof Number) {
+                            args.add(Byte.valueOf((byte)Number.intValue(obj).intValue()));
+                        } else if(!clz.isPrimitive() && obj == runtime.nil) {
+                            args.add(null);
+                        } else {
+                            args.clear();
+                            continue nextMethod;
+                        }
                     } else if(clz == Long.class || clz == Long.TYPE) {
                         // This should take into account widening and stuff like that later
                         if(obj instanceof Long) {
@@ -476,6 +517,22 @@ public class JavaArgumentsDefinition {
                                 args.add(obj);
                             }
                         }
+                    } else if(clz.isArray()) {
+//                         System.err.println(" -- adding the object for: " + members[i]);
+//                         System.err.println("  :" + clz);
+//                         System.err.println("   " + clz + ".isAssignableFrom(" + obj.getClass() + "): " + clz.isAssignableFrom(obj.getClass()));
+//                         System.err.println("   " + obj.getClass() + ".isAssignableFrom(" + clz + "): " + obj.getClass().isAssignableFrom(clz));
+
+                        if(obj == runtime.nil) {
+                            args.add(null);
+                        } else if(!isIokeObject && (clz.isAssignableFrom(obj.getClass()) || isExplicitCast)) {
+                            args.add(obj);
+                        } else if(isWrapper && (clz.isAssignableFrom(JavaWrapper.getObject(obj).getClass()) || isExplicitCast)) {
+                            args.add(JavaWrapper.getObject(obj));
+                        } else {
+                            args.clear();
+                            continue nextMethod;
+                        }
                     } else {
                         // here should probably be more advanced matching later on
                         if(obj == runtime.nil) {
@@ -508,7 +565,7 @@ public class JavaArgumentsDefinition {
         // error that no matching method could be found here. wait for specs for this, of course
 //         System.err.println("- Running with: " + members[i]);
         if(i == members.length) {
-            System.err.println("couldn't find matching for " + members[0] + " for arguments: " + resultArguments);
+            System.err.println("couldn't find matching for " + java.util.Arrays.asList((Object[])members) + " for arguments: " + resultArguments);
         }
 //         System.err.println("using: " + members[i] + " for: " + resultArguments + " with args: " + args);
         if(special) {

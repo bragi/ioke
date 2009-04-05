@@ -337,6 +337,7 @@ public class Runtime {
             evaluateString("use(\"builtin/G10_arity\")", message, ground);
 
             evaluateString("use(\"builtin/J05_javaGround\")", message, ground);
+            evaluateString("use(\"builtin/K05_system\")", message, ground);
         } catch(ControlFlow cf) {
         }
     }

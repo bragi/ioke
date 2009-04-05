@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Iterator;
 
 import ioke.lang.exceptions.ControlFlow;
 
@@ -273,6 +274,25 @@ public class IokeList extends IokeData {
                 @Override
                 public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
                     return ((IokeList)IokeObject.data(on)).getList().contains(args.get(0)) ? context.runtime._true : context.runtime._false;
+                }
+            }));
+
+        obj.registerMethod(runtime.newJavaMethod("adds the elements in the argument list to the current list, and then returns that list", new TypeCheckingJavaMethod("concat!") {
+                private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                    .builder()
+                    .receiverMustMimic(runtime.list)
+                    .withRequiredPositional("otherList").whichMustMimic(runtime.list)
+                    .getArguments();
+
+                @Override
+                public TypeCheckingArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    ((IokeList)IokeObject.data(on)).getList().addAll(((IokeList)IokeObject.data(args.get(0))).getList());
+                    return on;
                 }
             }));
 
@@ -723,6 +743,196 @@ public class IokeList extends IokeData {
                 	return copyList(context, receiver);
                 }
             }));
+
+        obj.registerMethod(obj.runtime.newJavaMethod("removes all nils in this list, and then returns the list", new TypeCheckingJavaMethod.WithNoArguments("compact!", runtime.list) {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    List<Object> list = getList(on);
+                    List<Object> newList = new ArrayList<Object>();
+                    Object nil = context.runtime.nil;
+                    for(Object o : list) {
+                        if(o != nil) {
+                            newList.add(o);
+                        }
+                    }
+                    setList(on, newList);
+                    return on;
+                }
+            }));
+
+        obj.registerMethod(obj.runtime.newJavaMethod("reverses the elements in this list, then returns it", new TypeCheckingJavaMethod.WithNoArguments("reverse!", runtime.list) {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    List<Object> list = getList(on);
+                    Collections.reverse(list);
+                    return on;
+                }
+            }));
+
+        obj.registerMethod(obj.runtime.newJavaMethod("flattens all lists in this list recursively, then returns it", new TypeCheckingJavaMethod.WithNoArguments("flatten!", runtime.list) {
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    setList(on, flatten(getList(on)));
+                    return on;
+                }
+            }));
+
+        obj.registerMethod(obj.runtime.newJavaMethod("returns a text composed of the asText representation of all elements in the list, separated by the separator. the separator defaults to an empty text.", new TypeCheckingJavaMethod("join") {
+                private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                    .builder()
+                    .receiverMustMimic(runtime.list)
+                    .withOptionalPositional("separator", "")
+                    .getArguments();
+
+                @Override
+                public TypeCheckingArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+                
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    List<Object> list = getList(on);
+                    String result;
+                    if(list.size() == 0) {
+                        result = "";
+                    } else {
+                        String sep = args.size() > 0 ? Text.getText(args.get(0)) : "";
+                        StringBuilder sb = new StringBuilder();
+                        join(list, sb, sep, context.runtime.asText, context);
+                        result = sb.toString();
+                    }
+                    return context.runtime.newText(result);
+                }
+            }));
+
+        obj.registerMethod(runtime.newJavaMethod("takes one or two arguments, and will then use these arguments as code to transform each element in this list. the transform happens in place. finally the method will return the receiver.", new JavaMethod("map!") {
+                private final DefaultArgumentsDefinition ARGUMENTS = DefaultArgumentsDefinition
+                    .builder()
+                    .withRequiredPositionalUnevaluated("argOrCode")
+                    .withOptionalPositionalUnevaluated("code")
+                    .getArguments();
+
+                @Override
+                public DefaultArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
+                    getArguments().checkArgumentCount(context, message, on);
+                    Runtime runtime = context.runtime;
+                    Object onAsList = context.runtime.list.convertToThis(on, message, context);
+                    
+                    List<Object> ls = ((IokeList)IokeObject.data(onAsList)).list;
+                    int size = ls.size();
+                    
+                    switch(message.getArgumentCount()) {
+                    case 1: {
+                        IokeObject code = IokeObject.as(message.getArguments().get(0), context);
+
+                        for(int i = 0; i<size; i++) {
+                            ls.set(i, code.evaluateCompleteWithReceiver(context, context.getRealContext(), ls.get(i)));
+                        }
+                        break;
+                    }
+                    case 2: {
+                        LexicalContext c = new LexicalContext(context.runtime, context, "Lexical activation context for List#map!", message, context);
+                        String name = IokeObject.as(message.getArguments().get(0), context).getName();
+                        IokeObject code = IokeObject.as(message.getArguments().get(1), context);
+
+                        for(int i = 0; i<size; i++) {
+                            c.setCell(name, ls.get(i));
+                            ls.set(i, code.evaluateCompleteWithoutExplicitReceiver(c, c.getRealContext()));
+                        }
+                        break;
+                    }
+                    }
+                    return on;
+                }
+            }));
+            
+        obj.aliasMethod("map!", "collect!", null, null);
+
+        obj.registerMethod(runtime.newJavaMethod("takes one or two arguments, and will then use these arguments as code to decide what elements should be removed from the list. the method will return the receiver.", new JavaMethod("removeIf!") {
+                private final DefaultArgumentsDefinition ARGUMENTS = DefaultArgumentsDefinition
+                    .builder()
+                    .withRequiredPositionalUnevaluated("argOrCode")
+                    .withOptionalPositionalUnevaluated("code")
+                    .getArguments();
+
+                @Override
+                public DefaultArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
+                    getArguments().checkArgumentCount(context, message, on);
+                    Runtime runtime = context.runtime;
+                    Object onAsList = context.runtime.list.convertToThis(on, message, context);
+                    
+                    List<Object> ls = ((IokeList)IokeObject.data(onAsList)).list;
+                    
+                    switch(message.getArgumentCount()) {
+                    case 1: {
+                        IokeObject code = IokeObject.as(message.getArguments().get(0), context);
+
+                        for(Iterator<Object> iter = ls.iterator(); iter.hasNext();) {
+                            Object obj = iter.next();
+                            if(IokeObject.isTrue(code.evaluateCompleteWithReceiver(context, context.getRealContext(), obj))) {
+                                iter.remove();
+                            }
+                        }
+                        break;
+                    }
+                    case 2: {
+                        LexicalContext c = new LexicalContext(context.runtime, context, "Lexical activation context for List#map!", message, context);
+                        String name = IokeObject.as(message.getArguments().get(0), context).getName();
+                        IokeObject code = IokeObject.as(message.getArguments().get(1), context);
+
+                        for(Iterator<Object> iter = ls.iterator(); iter.hasNext();) {
+                            Object obj = iter.next();
+                            c.setCell(name, obj);
+                            if(IokeObject.isTrue(code.evaluateCompleteWithoutExplicitReceiver(c, c.getRealContext()))) {
+                                iter.remove();
+                            }
+                        }
+                        break;
+                    }
+                    }
+                    return on;
+                }
+            }));
+            
+    }
+
+    private static List<Object> flatten(List<Object> list) {
+        List<Object> result = new ArrayList<Object>(list.size()*2);
+        flatten(list, result);
+        return result;
+    }
+
+    private static void flatten(List<Object> list, List<Object> result) {
+        for(Object l : list) {
+            if(l instanceof IokeObject && IokeObject.data(l) instanceof IokeList) {
+                flatten(getList(l), result);
+            } else {
+                result.add(l);
+            }
+        }
+    }
+
+    private static void join(List<Object> list, StringBuilder sb, String sep, IokeObject asText, IokeObject context) throws ControlFlow {
+        String realSep = "";
+        for(Object o : list) {
+            sb.append(realSep);
+            if(o instanceof IokeObject && IokeObject.data(o) instanceof IokeList) {
+                join(getList(o), sb, sep, asText, context);
+            } else {
+                sb.append(Text.getText(asText.sendTo(context, o)));
+            }
+            realSep = sep;
+        }
     }
 
     public void add(Object obj) {
@@ -733,8 +943,16 @@ public class IokeList extends IokeData {
         return list;
     }
 
+    public void setList(List<Object> list) {
+        this.list = list;
+    }
+
     public static List<Object> getList(Object on) {
         return ((IokeList)(IokeObject.data(on))).getList();
+    }
+
+    public static void setList(Object on, List<Object> list) {
+        ((IokeList)(IokeObject.data(on))).setList(list);
     }
 
     public static String getInspect(Object on) throws ControlFlow {

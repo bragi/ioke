@@ -29,6 +29,424 @@ describe(List,
     )
   )
   
+  describe("*",
+    it("is equivalent to self join(text) when passed a Text",
+      ([ 1, 2, 3 ] * ",") should == [1, 2, 3] join(",")
+    )
+ 
+    it("concatenates n copies of the list when passed an integer",
+      ([ 1, 2, 3 ] * 0) should == []
+      ([ 1, 2, 3 ] * 1) should == [1, 2, 3]
+      ([ 1, 2, 3 ] * 3) should == [1, 2, 3, 1, 2, 3, 1, 2, 3]
+      ([] * 10) should == []
+    )
+  )
+
+  describe("assoc",
+    it("should return nil for an empty list",
+      [] assoc(:foo) should be nil
+    )
+
+    it("should return nil for a list where it can't find the argument",
+      [[:bar], [:blah]] assoc(:foo) should be nil
+    )
+
+    it("should not fail for a list that includes stuff that isn't lists",
+      [1,2,3,4] assoc(:foo) should be nil
+    )
+
+    it("should return a list if it matches",
+      [[:abc], [:foo, 1, 2], [:blah]] assoc(:foo) should == [:foo, 1, 2]
+    )
+
+    it("should return the first list that matches",
+      [[:abc], [:foo, 1, 2], [:blah], [:foo, 3, 2]] assoc(:foo) should == [:foo, 1, 2]
+    )
+  )
+
+  describe("rassoc",
+    it("should return nil for an empty list",
+      [] rassoc(:foo) should be nil
+    )
+
+    it("should return nil for a list where it can't find the argument",
+      [[1, :bar], [2, :blah]] rassoc(:foo) should be nil
+    )
+
+    it("should not fail for a list that includes stuff that isn't lists",
+      [1,2,3,4] rassoc(:foo) should be nil
+    )
+
+    it("should return a list if it matches",
+      [[1, :abc], [2, :foo, 1, 2], [3, :blah]] rassoc(:foo) should == [2, :foo, 1, 2]
+    )
+
+    it("should return the first list that matches",
+      [[1, :abc], [2, :foo, 1, 2], [3, :blah], [4, :foo, 3, 2]] rassoc(:foo) should == [2, :foo, 1, 2]
+    )
+  )
+
+  describe("collect!",
+    it("should return an empty list for an empty enumerable",
+      [] collect!(x, x+2) should == []
+    )
+      
+    it("should return the same list for something that only returns itself",
+      [1, 2, 3] collect!(x, x) should == [1, 2, 3]
+    )
+
+    it("should take one argument and apply the inside",
+      [1, 2, 3] collect!(+2) should == [3, 4, 5]
+      [1, 2, 3] collect!(. 1) should == [1, 1, 1]
+    )
+
+    it("should take two arguments and apply the code with the argument name bound",
+      [1, 2, 3] collect!(x, x+3) should == [4, 5, 6]
+      [1, 2, 3] collect!(x, 1) should == [1, 1, 1]
+    )
+
+    it("should return the origin list",
+      x = [1,2,3]
+      x collect!(x, 1) should be same(x)
+    )
+
+    it("should modify the original list",
+      x = [1,2,3]
+      x collect!(x, 1)
+      x should == [1,1,1]
+    )
+  )
+
+  describe("map!",
+    it("should return an empty list for an empty enumerable",
+      [] map!(x, x+2) should == []
+    )
+      
+    it("should return the same list for something that only returns itself",
+      [1, 2, 3] map!(x, x) should == [1, 2, 3]
+    )
+
+    it("should take one argument and apply the inside",
+      [1, 2, 3] map!(+2) should == [3, 4, 5]
+      [1, 2, 3] map!(. 1) should == [1, 1, 1]
+    )
+
+    it("should take two arguments and apply the code with the argument name bound",
+      [1, 2, 3] map!(x, x+3) should == [4, 5, 6]
+      [1, 2, 3] map!(x, 1) should == [1, 1, 1]
+    )
+
+    it("should return the origin list",
+      x = [1,2,3]
+      x map!(x, 1) should be same(x)
+    )
+
+    it("should modify the original list",
+      x = [1,2,3]
+      x map!(x, 1)
+      x should == [1,1,1]
+    )
+  )
+
+  describe("compact",
+    it("should return an empty list for an empty list",
+      [] compact should == []
+    )
+
+    it("should return a list without nils",
+      [nil] compact should == []
+      [nil, 1] compact should == [1]
+      [1, nil, 1] compact should == [1, 1]
+      [1, nil] compact should == [1]
+      [1,2,3,:nil,nil, nil, nil, nil, :bah, nil] compact should == [1, 2, 3, :nil, :bah]
+    )
+
+    it("should leave a list without nils unmodified",
+      [:a] compact should == [:a]
+      [:a, :b, 123] compact should == [:a, :b, 123]
+    )
+
+    it("should not remove false values",
+      [false] compact should == [false]
+    )
+
+    it("should not modify the original list",
+      x = [nil, 1]
+      x compact
+      x should == [nil, 1]
+    )
+  )
+
+  describe("compact!",
+    it("should return the list",
+      x = [1,2,3]
+      x compact! should be same(x)
+    )
+
+    it("should leave an empty list unmodified",
+      x = []
+      x compact!
+      x should == []
+    )
+
+    it("should remove all nils in the list",
+      [nil] compact! should == []
+      [nil, 1] compact! should == [1]
+      [1, nil, 1] compact! should == [1, 1]
+      [1, nil] compact! should == [1]
+      [1,2,3,:nil,nil, nil, nil, nil, :bah, nil] compact! should == [1, 2, 3, :nil, :bah]
+    )
+
+    it("should leave a list without nils unmodified",
+      [:a] compact! should == [:a]
+      [:a, :b, 123] compact! should == [:a, :b, 123]
+    )
+
+    it("should not remove false values",
+      [false] compact! should == [false]
+    )
+
+    it("should modify the original list",
+      x = [1, nil]
+      x compact!
+      x should == [1]
+    )
+  )
+
+  describe("concat!",
+    it("should change nothing for an empty list",
+      x = [1]
+      x concat!([])
+      x should == [1]
+    )
+
+    it("should append the other list",
+      [] concat!([1]) should == [1]
+      [:foo, [:abc]] concat!([[:blarg], 1]) should == [:foo, [:abc], [:blarg], 1]
+    )
+
+    it("should modify the receiver",
+      x = [1]
+      x concat!([2])
+      x should == [1, 2]
+    )
+
+    it("should return the list",
+      x = [1]
+      x concat!([2]) should be same(x)
+    )
+  )
+
+  describe("removeIf!",
+    it("should change the list",
+      x = [1,2,3]
+      x removeIf!(>1)
+      x should == [1]
+    )
+
+    it("should return the list",
+      x = [1, 2, 3]
+      x removeIf!(>1) should be same(x)
+    )
+
+    it("should take one code argument and apply that to all values",
+      [] removeIf!(>1) should == []
+      [1,2,3] removeIf!(>1) should == [1]
+      [1,2,3] removeIf!(. true) should == []
+      [nil,false,nil] removeIf!(nil?) should == [false]
+      [nil,false,true] removeIf!(==2) should == [nil,false,true]
+    )
+
+    it("should take two arguments and use that as a predicate lexical block",
+      [] removeIf!(x, x>1) should == []
+      [1,2,3] removeIf!(x, x>1) should == [1]
+      [1,2,3] removeIf!(x, true) should == []
+      [nil,false,nil] removeIf!(x, x nil?) should == [false]
+      [nil,false,true] removeIf!(x, x==2) should == [nil,false,true]
+    )
+  )
+
+  describe("flatten",
+    it("should return an empty list for an empty list",
+      [] flatten should == []
+    )
+
+    it("should not touch non-list elements",
+      [1,2,3,:foo] flatten should == [1,2,3,:foo]
+      [1,2,3,set(:foo)] flatten should == [1,2,3,set(:foo)]
+    )
+
+    it("should flatten all lists into the end result, recursively",
+      [[1]] flatten should == [1]
+      [2, [1], 1] flatten should == [2, 1, 1]
+      [[2, [1]], 1] flatten should == [2, 1, 1]
+      [[2, [1]], [[1]]] flatten should == [2, 1, 1]
+      [[[2, [1]], [[1]]]] flatten should == [2, 1, 1]
+    )
+
+    it("should not modify the receiver",
+      x = [[1]]
+      x flatten
+      x should == [[1]]
+    )
+
+    it("should not modify any of the internal lists",
+      int = [1,[2],3]
+      x = [int, int]
+      x flatten
+      int should == [1,[2],3]
+    )
+  )
+
+  describe("flatten!",
+    it("should return an empty list for an empty list",
+      [] flatten! should == []
+    )
+
+    it("should not touch non-list elements",
+      [1,2,3,:foo] flatten! should == [1,2,3,:foo]
+      [1,2,3,set(:foo)] flatten! should == [1,2,3,set(:foo)]
+    )
+
+    it("should flatten all lists into the end result, recursively",
+      [[1]] flatten! should == [1]
+      [2, [1], 1] flatten! should == [2, 1, 1]
+      [[2, [1]], 1] flatten! should == [2, 1, 1]
+      [[2, [1]], [[1]]] flatten! should == [2, 1, 1]
+      [[[2, [1]], [[1]]]] flatten! should == [2, 1, 1]
+    )
+
+    it("should modify the receiver",
+      x = [[1]]
+      x flatten!
+      x should == [1]
+    )
+
+    it("should return the receiver",
+      x = [[1]]
+      x flatten! should be same(x)
+    )
+
+    it("should not modify any of the internal lists",
+      int = [1,[2],3]
+      x = [int, int]
+      x flatten!
+      int should == [1,[2],3]
+    )
+  )
+
+  describe("index",
+    it("should return the index of the first element == to object",
+      x = Origin mimic
+      x == = method(obj, 3 == obj)
+      [2, x, 3, 1, 3, 1] index(3) should == 1
+    )
+
+    it("should return 0 if first element == to object",
+      [2, 1, 3, 2, 5] index(2) should == 0
+    )
+
+    it("should return size-1 if only last element == to object",
+      [2, 1, 3, 1, 5] index(5) should == 4
+    )
+
+    it("should return nil if no element == to object",
+      [2, 1, 1, 1, 1] index(3) should be nil
+    )
+  )
+
+  describe("rindex",
+    it("should return the first index backwards from the end where element == to object",
+      [3,2,1,1,2,3] rindex(3) should == 5
+      [3,2,1,1,2,3] rindex(2) should == 4
+      [3,2,1,1,2,3] rindex(1) should == 3
+    )
+
+    it("should return size-1 if last element == to object",
+      [2, 1, 3, 2, 5] rindex(5) should == 4
+    )
+
+    it("should return 0 if only first element == to object",
+      [2, 1, 3, 1, 5] rindex(2) should == 0
+    )
+
+    it("should return nil if no element == to object",
+      [1, 1, 3, 2, 1, 3] rindex(4) should be nil
+    )
+  )
+
+  describe("join",
+    it("returns an empty text if the List is empty",
+      a = []
+      a join should == ""
+    )
+
+    it("returns a text formed by concatenating each element asText separated by separator without trailing separator",
+      obj = Origin with(asText: "foo")
+      [1, 2, 3, 4, obj] join(" | ") should == "1 | 2 | 3 | 4 | foo"
+    )
+  
+    it("uses the same separator with nested list",
+      [1, [2, [3, 4], 5], 6] join(":") should == "1:2:3:4:5:6"
+    )
+
+    it("should default to the empty text as separator",
+      [1, 2, 3] join should == "123"
+    )
+  
+    it("does not process the separator if the list is empty",
+      a = []
+      sep = Origin mimic
+      a join(sep) should == ""
+    )
+  )
+
+  describe("reverse",
+    it("should return the same list for an empty list",
+      [] reverse should == []
+    )
+
+    it("should return a reversed list",
+      [1] reverse should == [1]
+      [1,2,1] reverse should == [1,2,1]
+      [1,2,3] reverse should == [3,2,1]
+      [:foo, :bar] reverse should == [:bar, :foo]
+    )
+
+    it("should not modify the receiver",
+      x = [1,2,3,4]
+      x reverse
+      x should == [1,2,3,4]
+    )
+
+    it("should not reverse internal lists",
+      [[1,2], [3,4], [5,6], [7, 8]] reverse should == [[7, 8], [5,6], [3,4], [1, 2]]
+    )
+  )
+
+  describe("reverse!",
+    it("should return the same list for an empty list",
+      [] reverse! should == []
+    )
+
+    it("should return a reversed list",
+      [1] reverse! should == [1]
+      [1,2,1] reverse! should == [1,2,1]
+      [1,2,3] reverse! should == [3,2,1]
+      [:foo, :bar] reverse! should == [:bar, :foo]
+    )
+
+    it("should modify the receiver",
+      x = [1,2,3,4]
+      x reverse!
+      x should == [4,3,2,1]
+    )
+
+    it("should not reverse internal lists",
+      [[1,2], [3,4], [5,6], [7, 8]] reverse! should == [[7, 8], [5,6], [3,4], [1, 2]]
+    )
+  )
+
   describe("at", 
     it("should return nil if empty list", 
       list at(0) should be nil
@@ -574,10 +992,6 @@ describe(List,
     )
   )
 
-;   describe("removeIf!", 
-;     it("should have tests")
-;   )
-  
   describe("first", 
     it("should return nil for an empty list", 
       [] first should be nil

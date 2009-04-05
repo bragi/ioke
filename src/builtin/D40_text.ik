@@ -15,6 +15,23 @@ Text cell("*") = method(
   times times(result += self)
   result)
 
+Text cell("%") = method(
+  "takes either a single argument or a list of arguments and sends these on to 'format'",
+  formatSpec,
+  if(formatSpec mimics?(List),
+    self format(*formatSpec),
+    self format(formatSpec)))
+
+Text cell("=~") = method(
+  "takes a regular expression, and tries to match that regular expression against the the self",
+  regexp,
+  regexp =~ self)
+
+Text cell("!~") = method(
+  "takes a regular expression, and tries to see if that expression doesn't match the text",
+  regexp,
+  regexp !~ self)
+
 Text do(=== = generateMatchMethod(==))
 
 Text chars = method(

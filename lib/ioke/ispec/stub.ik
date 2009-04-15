@@ -37,8 +37,12 @@ ISpec do(
   stubs = ISpec Stubs mimic
 
   ExtendedDefaultBehavior do(
-    stub! = method("adds a stub to this object", cellName,
-      ISpec stubs addStub(self, cellName)
+    stub! = method("adds a stub to this object", cellName nil, +:cellNamesAndReturnValues,
+      if(!cellName nil?,
+        ISpec stubs addStub(self, cellName),
+        cellNamesAndReturnValues each(pair,
+          ISpec stubs addStub(self, pair key) andReturn(pair value))
+      )
     )
 
     mock! = method("adds a mock to this object", cellName,
@@ -101,16 +105,23 @@ ISpec do(
   Mock = Stub mimic do(
     expectedCalls = 1
     actualCalls   = 0
+    negated?      = false
+    
     never = method(times(0))
     once  = method(times(1))
     times = method(n, @expectedCalls = n. self)
-    invoke = method(@actualCalls += 1. returnValue)
     atLeastOnce = method(times(1..(Number Infinity)))
 
+    invoke = method(@actualCalls += 1. returnValue)
+    
+    negate! = method(self negated? = true. self)
+    
     satisfied? = method(
-      if(@expectedCalls cell?(:include?),
+      expectationMatched? = if(@expectedCalls cell?(:include?),
         @expectedCalls include?(@actualCalls),
         @expectedCalls == @actualCalls)
+      
+      expectationMatched? xor negated?
     )
 
     signal! = method(
@@ -118,9 +129,9 @@ ISpec do(
         "between #{@expectedCalls from} and #{expectedCalls to} time(s)",
         ordinalize(@expectedCalls))
       actualMessage = ordinalize(@actualCalls)
-
-      error!(ISpec UnexpectedInvocation,
-        text: "#{@cellName} mock expected to be called #{expectedMessage}, but it was called #{actualMessage}")
+        
+      error!(ISpec UnexpectedInvocation, 
+        text: "'#{@cellName}' expected to be called #{expectedMessage}, but it was called #{actualMessage}")
     )
 
     ordinalize = method(n,
@@ -130,42 +141,88 @@ ISpec do(
         "exactly #{n} times")
     )
   )
+  
+  DescribeContext do(
+    after(ISpec stubs verifyAndClear!)
+    
+    mock = macro(
+      mockObject = ISpec MockTemplate mimic
+    
+      call arguments each(expectation,
+        if(expectation name asText =~ #/:$/, ; hash syntax
+          mockObject mock!(expectation name asText replace(#/:$/, "")) andReturn(expectation next evaluateOn(call ground)),
+        
+          furtherExpectations = expectation next
+          mockExpectation = mockObject mock!(expectation name) withArgs(*(expectation arguments map(evaluateOn(call ground))))
+          unless(furtherExpectations nil? || furtherExpectations terminator?, furtherExpectations sendTo(mockExpectation))
+        )
+      )
+      mockObject
+    )
+  
+    stub = method(+:cellsAndValues,
+      stubObject = Origin mimic
+      cellsAndValues each(pair,
+        stubObject stub!(pair key) andReturn(pair value)
+      )
+      stubObject
+    )
+  )
+  
+  MockTemplate = Origin mimic do(
+    pass = macro(
+      __invoke__(call message name, *(call arguments))
+    )
+  
+    __invoke__ = method(cellName, +posArgs, +:namedArgs,
+      ISpec stubs invoke(self, cellName, posArgs, namedArgs)
+    )
+  )
+  
+  ShouldContext signalMock! = method(
+    failFn = fn(ISpec stubs verifyAndClear!(Ground false). self realValue call. ISpec stubs verifyAndClear!(Ground true))
+    signalled = "none"
+    bind(rescue(ISpec UnexpectedInvocation, fn(c, signalled = c)), failFn call)
+    signalled
+  )
 
   ShouldContext satisfyExpectations = method(
-    fn(
-      ISpec stubs verifyAndClear!(Ground false)
-      self realValue call
-      ISpec stubs verifyAndClear!(Ground true)
-    ) should not signal(ISpec UnexpectedInvocation)
+    if((signal = signalMock!) mimics?(ISpec UnexpectedInvocation),
+      error!(ISpec ExpectationNotMet, text: "#{signal text}, code: #{realValue code}", shouldMessage: self shouldMessage))
   )
 
   NotShouldContext satisfyExpectations = method(
-    fn(
-      ISpec stubs verifyAndClear!(Ground false)
-      self realValue call
-      ISpec stubs verifyAndClear!(Ground true)
-    ) should signal(ISpec UnexpectedInvocation)
+    unless((signal = signalMock!) mimics?(ISpec UnexpectedInvocation),
+      error!(ISpec ExpectationNotMet, text: "#{signal text}, code: #{realValue code}", shouldMessage: self shouldMessage))
   )
 
   ShouldContext receive = macro(
     if(call arguments empty?,
       Origin mimic with(pass: generateMock(call message next, call ground)),
-      call arguments each(expectation, generateMock(expectation, call ground))
+      
+      furtherExpectations = call message next
+      call arguments each(expectation, 
+        mock = generateMock(expectation, call ground)
+        unless(furtherExpectations nil? || furtherExpectations terminator?, furtherExpectations sendTo(mock))
+        mock)
+      Origin mimic do(pass = method(nil))
     )
   )
 
   NotShouldContext receive = macro(
     if(call arguments empty?,
-      Origin mimic with(pass: generateMock(call message next, call ground) never),
-      call arguments each(expectation, generateMock(expectation, call ground) never)
+      Origin mimic with(pass: generateMock(call message next, call ground) negate!),
+
+      furtherExpectations = call message next
+      call arguments each(expectation, 
+        mock = generateMock(expectation, call ground) negate!
+        unless(furtherExpectations nil? || furtherExpectations terminator?, furtherExpectations sendTo(mock))
+        mock)
+      Origin mimic do(pass = method(nil))
     )
   )
 
   ShouldContext generateMock = method(message, ground,
     self realValue mock!(message name) withArgs(*(message arguments map(evaluateOn(ground))))
-  )
-
-  DescribeContext after(
-    ISpec stubs verifyAndClear!
   )
 )

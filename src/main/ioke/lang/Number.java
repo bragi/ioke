@@ -306,7 +306,7 @@ public class Number extends IokeData {
                     IokeData data = IokeObject.data(arg);
                     
                     if(data instanceof Decimal) {
-                        return context.runtime.minusMessage.sendTo(context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
+                        return ((Message)IokeObject.data(context.runtime.minusMessage)).sendTo(context.runtime.minusMessage, context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
                     } else {
                         if(!(data instanceof Number)) {
                             arg = IokeObject.convertToRational(arg, message, context, true);
@@ -336,7 +336,7 @@ public class Number extends IokeData {
                     IokeData data = IokeObject.data(arg);
                     
                     if(data instanceof Decimal) {
-                        return context.runtime.plusMessage.sendTo(context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
+                        return ((Message)IokeObject.data(context.runtime.plusMessage)).sendTo(context.runtime.plusMessage, context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
                     } else {
                         if(!(data instanceof Number)) {
                             arg = IokeObject.convertToRational(arg, message, context, true);
@@ -366,7 +366,7 @@ public class Number extends IokeData {
                     IokeData data = IokeObject.data(arg);
                     
                     if(data instanceof Decimal) {
-                        return context.runtime.multMessage.sendTo(context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
+                        return ((Message)IokeObject.data(context.runtime.multMessage)).sendTo(context.runtime.multMessage, context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
                     } else {
                         if(!(data instanceof Number)) {
                             arg = IokeObject.convertToRational(arg, message, context, true);
@@ -396,7 +396,7 @@ public class Number extends IokeData {
                     IokeData data = IokeObject.data(arg);
                     
                     if(data instanceof Decimal) {
-                        return context.runtime.divMessage.sendTo(context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
+                        return ((Message)IokeObject.data(context.runtime.divMessage)).sendTo(context.runtime.divMessage, context, context.runtime.newDecimal(((Number)IokeObject.data(on))), arg);
                     } else {
                         if(!(data instanceof Number)) {
                             arg = IokeObject.convertToRational(arg, message, context, true);
@@ -696,7 +696,7 @@ public class Number extends IokeData {
                     case 1: {
                         Object result = runtime.nil;
                         while(num > 0) {
-                            result = message.getEvaluatedArgument(0, context);
+                            result = ((Message)IokeObject.data(message)).getEvaluatedArgument(message, 0, context);
                             num--;
                         }
                         return result;
@@ -707,7 +707,7 @@ public class Number extends IokeData {
                         Object result = runtime.nil;
                         while(ix<num) {
                             context.setCell(name, runtime.newNumber(IntNum.make(ix)));
-                            result = message.getEvaluatedArgument(1, context);
+                            result = ((Message)IokeObject.data(message)).getEvaluatedArgument(message, 1, context);
                             ix++;
                         }
                         return result;

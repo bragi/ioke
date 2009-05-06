@@ -480,6 +480,17 @@ describe(List,
        fn([] at([])) should signal(Condition Error Type IncorrectType)
     )
   )
+  
+  describe("toJson",
+    it("has representation of empty List",
+      [] toJson should = "[]"
+    )
+
+    it("calls toJson on each element and concatenates them with comma",
+      obj = Origin with(toJson: "foo")
+      [1, (1/2), 0.5, 4, obj] toJson should == "[1, 0.5, 0.5, 4, foo]"
+    )
+  )
 
   describe("[]", 
     describe("with number argument",

@@ -117,3 +117,8 @@ List rindex = method(
     if(self[index] == obj,
       return index))
   nil)
+
+List toJson = method(
+  "Returns JSON representation of the object",
+  "[%s]" % map(toJson) join(", ")
+)

@@ -13,6 +13,16 @@ Number abs = method(
   if(self < 0, negation, self)
 )
 
+Number toJson = method(
+  "Returns JSON representation of the object",
+  asText
+)
+
+Number Ratio toJson = method(
+  "Returns JSON representation of the object",
+  (0.0 + self) asText
+)
+
 Number          do(=== = generateMatchMethod(==))
 Number Real     do(=== = generateMatchMethod(==))
 Number Rational do(=== = generateMatchMethod(==))

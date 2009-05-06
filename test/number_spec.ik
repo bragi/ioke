@@ -540,6 +540,20 @@ describe(Number,
         (-645654) asText should == "-645654"
       )
     )
+    
+    describe("toJson",
+      it("should have representation of Number",
+        0 toJson should == "0"
+      )
+
+      it("should have floating point representation of Ratio",
+        (1/2) toJson should == "0.5"
+      )
+      
+      it("should have representation of Real",
+        0.5 toJson should == "0.5"
+      )
+    )
 
     describe("inspect",
       it("should validate type of receiver",

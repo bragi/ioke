@@ -434,6 +434,12 @@ describe("Text",
       Text should checkReceiverTypeOn(:"toDecimal")
     )
   )
+  
+  describe("toJson",
+    it("should have json representation",
+      "json" toJson should == "\"json\""
+    )
+  )
 
   describe("lower",
     it("should return the same string if it's already lower case",

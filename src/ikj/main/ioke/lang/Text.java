@@ -16,6 +16,8 @@ import org.jregex.Pattern;
 import org.jregex.RETokenizer;
 import org.jregex.Replacer;
 
+import org.svenson.JSON;
+
 /**
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -41,6 +43,14 @@ public class Text extends IokeData {
                 public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
                     getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
                     return on;
+                }
+            }));
+
+        obj.registerMethod(obj.runtime.newNativeMethod("Returns JSON representation of the object", new NativeMethod.WithNoArguments("toJson") {
+                @Override
+                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
+                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
+                    return method.runtime.newText((new JSON()).forValue(Text.getText(on)));
                 }
             }));
 

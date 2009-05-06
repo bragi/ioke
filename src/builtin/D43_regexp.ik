@@ -7,3 +7,7 @@ Regexp cell("!~") = method(
   if(self =~ text,
     false,
     true))
+
+Regexp toJson = method(
+  inspect[1..-1]
+)

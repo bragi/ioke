@@ -591,6 +591,11 @@ describe(Regexp,
       Regexp should checkReceiverTypeOn(:inspect)
     )
   )
+  describe("toJson",
+    it("should have JSON representation",
+      #/.*/ toJson should == "/.*/"
+    )
+  )
 
   describe("notice",
     it("should notice correctly for a simple regexp",

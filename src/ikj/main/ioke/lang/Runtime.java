@@ -314,6 +314,7 @@ public class Runtime {
             evaluateString("use(\"builtin/A25_defaultBehavior_inspection\")", message, ground);
             evaluateString("use(\"builtin/A30_system\")", message, ground);
 
+            evaluateString("use(\"builtin/D03_nil\")", message, ground);
             evaluateString("use(\"builtin/D05_number\")", message, ground);
             evaluateString("use(\"builtin/D10_call\")", message, ground);
             evaluateString("use(\"builtin/D15_range\")", message, ground);

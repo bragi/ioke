@@ -373,5 +373,26 @@ describe(DefaultBehavior,
     it("should be the number of pairs in dict",
       dict(a: 1, b: 2) size should == 2)
   )
-      
+  
+  describe("toJson",
+    it("should have representation of empty dict",
+      {} toJson should == "{}"
+    )
+    
+    it("should have JSON representation",
+      {0 => 1, "a" => "b"} toJson should == "{0 : 1, \"a\" : \"b\"}"
+    )
+
+    it("calls toJson on each key and value",
+      key = Origin with(toJson: "key")
+      value = Origin with(toJson: "value")
+      {key => value} toJson should == "{key : value}"
+    )
+
+    it("ignores pairs where key or value do not have JSON representation",
+      obj = Origin mimic
+      obj undefineCell!(:toJson)
+      {0 => obj, obj => 1} toJson should == "{}"
+    )
+  )
 )

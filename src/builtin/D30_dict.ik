@@ -30,3 +30,9 @@ Dict ?& = dmacro(
     self))
 
 Dict do(=== = generateMatchMethod(==))
+
+Dict toJson = method(
+  availableItems = select(pair, (pair key cell?(:toJson)) && (pair value cell?(:toJson)))
+  jsonisedItems = availableItems map(pair, "%s : %s" % list(pair key toJson, pair value toJson))
+  "{%s}" % jsonisedItems join(", ")
+)

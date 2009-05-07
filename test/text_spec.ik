@@ -435,12 +435,6 @@ describe("Text",
     )
   )
   
-  describe("toJson",
-    it("should have json representation",
-      "json" toJson should == "\"json\""
-    )
-  )
-
   describe("lower",
     it("should return the same string if it's already lower case",
       "foo" lower should == "foo"

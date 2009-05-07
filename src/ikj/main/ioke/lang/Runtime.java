@@ -314,7 +314,6 @@ public class Runtime {
             evaluateString("use(\"builtin/A25_defaultBehavior_inspection\")", message, ground);
             evaluateString("use(\"builtin/A30_system\")", message, ground);
 
-            evaluateString("use(\"builtin/D03_nil\")", message, ground);
             evaluateString("use(\"builtin/D05_number\")", message, ground);
             evaluateString("use(\"builtin/D10_call\")", message, ground);
             evaluateString("use(\"builtin/D15_range\")", message, ground);
@@ -338,6 +337,8 @@ public class Runtime {
             evaluateString("use(\"builtin/G10_origin\")", message, ground);
             evaluateString("use(\"builtin/G10_arity\")", message, ground);
 
+            evaluateString("use(\"builtin/H10_json\")", message, ground);
+            
             evaluateString("use(\"builtin/J05_javaGround\")", message, ground);
         } catch(ControlFlow cf) {
         }

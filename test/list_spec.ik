@@ -481,23 +481,6 @@ describe(List,
     )
   )
 
-  describe("toJson",
-    it("has representation of empty List",
-      [] toJson should = "[]"
-    )
-
-    it("calls toJson on each element and concatenates them with comma",
-      obj = Origin with(toJson: "foo")
-      [1, (1/2), 0.5, 4, obj] toJson should == "[1, 0.5, 0.5, 4, foo]"
-    )
-
-    it("ignores items that do not have JSON representation",
-      obj = Origin mimic
-      obj undefineCell!(:toJson)
-      [obj] toJson should == "[]"
-    )
-  )
-
   describe("[]",
     describe("with number argument",
       it("should return nil if empty list when given a number",

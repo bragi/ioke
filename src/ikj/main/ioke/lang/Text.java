@@ -50,7 +50,7 @@ public class Text extends IokeData {
                 @Override
                 public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
                     getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return method.runtime.newText((new JSON()).forValue(Text.getText(on)));
+                    return method.runtime.newText((JSON.defaultJSON()).forValue(Text.getText(on)));
                 }
             }));
 

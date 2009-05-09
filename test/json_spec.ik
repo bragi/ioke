@@ -93,3 +93,10 @@ describe(Origin,
     Origin mimic toJson should == "{\"kind\" : \"Origin\"}"
   )
 )
+
+describe(DateTime,
+  it("should have JSON representation",
+    date = DateTime now
+    date toJson should == date asText
+  )
+)

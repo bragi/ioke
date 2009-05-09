@@ -19,11 +19,11 @@ JSON do(
       seen pop!
     )
   )
-  
+
   jsonCells = method(
     "returns object's cells that can be exported to JSON",
     object,
-    
+
     {kind: object kind} merge(object cells)
   )
 
@@ -90,4 +90,9 @@ Dict toJson = method(
 Regexp toJson = macro(
   "Returns JSON representation of the object",
   inspect[1..-1]
+)
+
+DateTime toJson = macro(
+  "Returns JSON representation of the object",
+  asText
 )

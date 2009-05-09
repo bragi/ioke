@@ -25,6 +25,12 @@ describe(Regexp,
   )
 )
 
+describe(Symbol,
+  it("should have json representation",
+    :json toJson should == "\"json\""
+  )
+)
+
 describe(Text,
   it("should have json representation",
     "json" toJson should == "\"json\""
@@ -80,10 +86,10 @@ describe(Dict,
     value = Origin with(toJson: "value")
     {key => value} toJson should == "{key : value}"
   )
+)
 
-  it("ignores pairs where key or value do not have JSON representation",
-    obj = Origin mimic
-    obj undefineCell!(:toJson)
-    {0 => obj, obj => 1} toJson should == "{}"
+describe(Origin,
+  it("should have JSON representation",
+    Origin mimic toJson should == "{\"kind\" : \"Origin\"}"
   )
 )

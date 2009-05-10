@@ -5,6 +5,7 @@ package ioke.lang;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import ioke.lang.exceptions.ControlFlow;
 
@@ -77,6 +78,42 @@ public class DateTime extends IokeData {
                     return method.runtime.newText(DateTime.getNotice(on));
                 }
             }));
+
+            obj.registerMethod(obj.runtime.newNativeMethod("parses provided text with DateTime in ISO format. Returns parsed date or nil if text does not contain a date", new TypeCheckingNativeMethod("parseIso") {
+                    private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                        .builder()
+                        .receiverMustMimic(runtime.dateTime)
+                        .withRequiredPositional("text")
+                        .getArguments();
+
+                    @Override
+                    public TypeCheckingArgumentsDefinition getArguments() {
+                        return ARGUMENTS;
+                    }
+
+                    @Override
+                    public Object activate(IokeObject self, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+//                        getArguments().getEvaluatedArguments(context, message, on, args, new HashMap<String, Object>());
+//                        return context.runtime.nil;
+                        Object arg = args.get(0);
+
+                        if(!(IokeObject.data(arg) instanceof Text)) {
+                            arg = IokeObject.convertToText(arg, message, context, false);
+                            if(!(IokeObject.data(arg) instanceof Text)) {
+                                // Can't compare, so bail out
+                                return context.runtime.nil;
+                            }
+                        }
+
+                        String dateToParse = ((Text)IokeObject.data(arg)).getText();
+                        org.joda.time.format.DateTimeFormatter parser = org.joda.time.format.ISODateTimeFormat.dateTimeParser();
+                        try {
+                           return context.runtime.newDateTime(parser.parseDateTime(dateToParse));
+                        } catch(IllegalArgumentException e) {
+                          return context.runtime.nil;
+                        }
+                    }
+                }));
     }
 
     public IokeData cloneData(IokeObject obj, IokeObject m, IokeObject context) {

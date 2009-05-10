@@ -97,6 +97,6 @@ describe(Origin,
 describe(DateTime,
   it("should have JSON representation",
     date = DateTime now
-    date toJson should == date asText
+    date toJson should == "{\"kind\" : \"DateTime\", \"value\" : \"#{date asText}\"}"
   )
 )

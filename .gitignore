@@ -29,3 +29,5 @@ version_data.properties
 /lib/dist
 cobertura.ser
 file
+.tmtags
+nbproject

@@ -27,4 +27,11 @@ describe(DateTime,
       DateTime should checkReceiverTypeOn(:notice)
     )
   )
+  
+  describe("parseIso",
+    it("should parse default representation",
+      now = DateTime now
+      DateTime parseIso(now asText) should == now
+    )
+  )
 )

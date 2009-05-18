@@ -389,8 +389,5 @@ describe(DefaultBehavior,
       d = dict("a" => 5)
       d removeAt!("a") should == 5
     )
-    
-    it("should remove default value when key does not exist",
-    )
   )
 )

@@ -94,5 +94,5 @@ Regexp toJson = macro(
 
 DateTime toJson = macro(
   "Returns JSON representation of the object",
-  {kind: "DateTime", value: asText} toJson
+  asText
 )

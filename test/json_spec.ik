@@ -115,7 +115,7 @@ describe(JSON,
       JSON private:dict("a" => "b", "kind" => "Origin").a should == "b"
     )
     
-    it("should create dict when it has non-string keys",
+    it("should not create mimic when it has non-string keys",
       JSON private:dict([] => "b", "kind" => "Origin") should == {[] => "b", "kind" => "Origin"}
     )
   )

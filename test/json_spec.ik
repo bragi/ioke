@@ -100,3 +100,47 @@ describe(DateTime,
     date toJson should == date asText
   )
 )
+
+describe(JSON,
+  describe("private:dict",
+    it("should create dict",
+      JSON private:dict("a" => "b") should == {"a" => "b"}
+    )
+
+    it("should create mimic",
+      JSON private:dict("a" => "b", "kind" => "Origin") kind should == "Origin"
+    )
+    
+    it("should set cells on mimic",
+      JSON private:dict("a" => "b", "kind" => "Origin").a should == "b"
+    )
+    
+    it("should create dict when it has non-string keys",
+      JSON private:dict([] => "b", "kind" => "Origin") should == {[] => "b", "kind" => "Origin"}
+    )
+  )
+
+  describe("fromIoke",
+    it("should create an empty list",
+      JSON fromIoke([]) should == list
+    )
+    
+    it("should create an empty dict",
+      JSON fromIoke({}) should == dict
+    )
+  )
+
+  describe("fromText",
+    it("should create an empty list",
+      JSON fromText("[]") should == list
+    )
+
+    it("should create an empty dict",
+      JSON fromText("{}") should == dict
+    )
+
+    it("should create Origin",
+      JSON fromText("{\"kind\" : \"Origin\"}") kind should == "Origin"
+    )
+  )
+)

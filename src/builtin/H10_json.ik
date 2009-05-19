@@ -19,6 +19,41 @@ JSON do(
       seen pop!
     )
   )
+  
+  private:buildObject = method(d,
+    k = d removeAt!("kind")
+    o = Ground send(k)
+    d each(pair,
+      o cell(pair key) = pair value
+    )
+    o
+  )
+  
+  private:object? = method(d,
+    d key?("kind") && d keys all?(kind?("Text"))
+  )
+  
+  private:dict = macro(
+    d = call resendToMethod(:dict)
+    if(JSON private:object?(d),
+      JSON private:buildObject(d),
+      
+      d
+    )
+  )
+  
+  fromIoke = macro(
+    let(Text cell(":"), DefaultBehavior cell("=>"),
+      Ground cell("{}"), JSON cell("private:dict"),
+      call argAt(0)
+    )
+  )
+  
+  fromText = method(
+    "parses provided text as JSON and returns Ioke objects reflecting content",
+    text,
+    fromIoke(Message fromText(text) evaluateOn(Ground))
+  )
 
   jsonCells = method(
     "returns object's cells that can be exported to JSON",

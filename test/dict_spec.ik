@@ -373,5 +373,21 @@ describe(DefaultBehavior,
     it("should be the number of pairs in dict",
       dict(a: 1, b: 2) size should == 2)
   )
-      
+
+  describe("removeAt!",
+    it("should return nil when called for empty dict",
+      dict removeAt!("a") should be nil
+    )
+    
+    it("should remove entry",
+      d = dict("a" => 5)
+      d removeAt!("a")
+      d should be empty
+    )
+    
+    it("should return removed entry",
+      d = dict("a" => 5)
+      d removeAt!("a") should == 5
+    )
+  )
 )

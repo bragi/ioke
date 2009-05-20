@@ -261,6 +261,27 @@ public class Dict extends IokeData {
                     return on;
                 }
             }));
+        obj.registerMethod(runtime.newNativeMethod("takes as argument the key to be removed and returns value for this key or default value for dict", new TypeCheckingNativeMethod("removeAt!") {
+                private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
+                    .builder()
+                    .receiverMustMimic(runtime.dict)
+                    .withRequiredPositional("key")
+                    .getArguments();
+
+                @Override
+                public TypeCheckingArgumentsDefinition getArguments() {
+                    return ARGUMENTS;
+                }
+
+                @Override
+                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
+                    Object result = Dict.getMap(on).remove(args.get(0));
+                    if(result == null) {
+                        return getDefaultValue(on, context, message);
+                    } else {
+                        return result;
+                    }
+                }}));
     }
 
     public static Map<Object, Object> getMap(Object dict) {

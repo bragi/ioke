@@ -28,10 +28,10 @@ describe(DateTime,
     )
   )
   
-  describe("parseIso",
+  describe("fromIsoText",
     it("should parse default representation",
       now = DateTime now
-      DateTime parseIso(now asText) should == now
+      DateTime fromIsoText(now toIsoText) should == now
     )
   )
 )

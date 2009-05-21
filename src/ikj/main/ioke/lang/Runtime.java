@@ -296,6 +296,7 @@ public class Runtime {
         restart.mimicsWithoutCheck(origin);
 
         javaWrapper.mimicsWithoutCheck(origin);
+        extension.mimicsWithoutCheck(origin);
 
         Reflector.init(this);
 

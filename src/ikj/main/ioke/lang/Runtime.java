@@ -92,6 +92,8 @@ public class Runtime {
 
     public IokeObject javaArray = new IokeObject(this, "JavaArray is the common mimic that defines all the magic methods on native java arrays");
 
+    public IokeObject extension = new IokeObject(this, "Extension allows to manage native extensions to Ioke runtime");
+
     public IokeObject integer = null;
     public IokeObject decimal = null;
     public IokeObject ratio = null;
@@ -229,6 +231,7 @@ public class Runtime {
         JavaGround.init(javaGround);
         JavaArray.init(javaArray);
         javaWrapper.init();
+        Extension.init(extension);
 
         iokeGround.mimicsWithoutCheck(defaultBehavior);
         iokeGround.mimicsWithoutCheck(base);
@@ -340,6 +343,8 @@ public class Runtime {
             evaluateString("use(\"builtin/G10_arity\")", message, ground);
 
             evaluateString("use(\"builtin/J05_javaGround\")", message, ground);
+
+            evaluateString("use(\"builtin/J10_extension\")", message, ground);
         } catch(ControlFlow cf) {
         }
     }

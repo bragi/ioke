@@ -3,11 +3,6 @@
  */
 package ioke.lang;
 
-import ioke.lang.IokeObject;
-import ioke.lang.Runtime;
-import ioke.lang.Text;
-import ioke.lang.TypeCheckingArgumentsDefinition;
-import ioke.lang.TypeCheckingNativeMethod;
 import ioke.lang.exceptions.ControlFlow;
 import java.util.List;
 import java.util.Map;

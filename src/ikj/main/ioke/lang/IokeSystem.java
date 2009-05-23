@@ -6,7 +6,6 @@ package ioke.lang;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.File;
-import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -38,11 +37,12 @@ public class IokeSystem extends IokeData {
     private List<String> currentFile = new ArrayList<String>(Arrays.asList("<init>"));
     private String currentProgram;
     private String currentWorkingDirectory;
-    private Set<String> loaded = new HashSet<String>();
     private List<AtExitInfo> atExit = new ArrayList<AtExitInfo>();
 
     private IokeObject loadPath;
     private IokeObject programArguments;
+
+    private Uses uses;
 
     private Random random = new Random();
 
@@ -75,7 +75,16 @@ public class IokeSystem extends IokeData {
     }
 
     public String getCurrentWorkingDirectory() {
-        return this.currentWorkingDirectory;
+        if(currentWorkingDirectory == null) {
+            // Use the JVM's CWD
+            try {
+                currentWorkingDirectory = new File(".").getCanonicalPath();
+            } catch(Exception e) {
+                currentWorkingDirectory = ".";
+            }
+        }
+
+        return currentWorkingDirectory;
     }
 
     public void addLoadPath(String newPath) {
@@ -85,10 +94,7 @@ public class IokeSystem extends IokeData {
     public void addArgument(String newArgument) {
         IokeList.getList(programArguments).add(programArguments.runtime.newText(newArgument));
     }
-
-    private static final String[] SUFFIXES = {".ik", ".jar"};
-    private static final String[] SUFFIXES_WITH_BLANK = {"", ".ik", ".jar"};
-
+    
     public final static boolean DOSISH = System.getProperty("os.name").indexOf("Windows") != -1;
 
     public static boolean isAbsoluteFileName(String name) {
@@ -100,286 +106,9 @@ public class IokeSystem extends IokeData {
     }
 
     public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
-        final Runtime runtime = context.runtime;
-        Builtin b = context.runtime.getBuiltin(name);
-        if(b != null) {
-            if(loaded.contains(name)) {
-                return false;
-            } else {
-                try {
-                    b.load(context.runtime, context, message);
-                    loaded.add(name);
-                    return true;
-                } catch(Throwable e) {
-                    final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition, 
-                                                                                       message, 
-                                                                                       context, 
-                                                                                       "Error", 
-                                                                                       "Load"), context).mimic(message, context);
-                    condition.setCell("message", message);
-                    condition.setCell("context", context);
-                    condition.setCell("receiver", self);
-                    condition.setCell("moduleName", runtime.newText(name));
-                    condition.setCell("exceptionMessage", runtime.newText(e.getMessage()));
-                    List<Object> ob = new ArrayList<Object>();
-                    for(StackTraceElement ste : e.getStackTrace()) {
-                        ob.add(runtime.newText(ste.toString()));
-                    }
-
-                    condition.setCell("exceptionStackTrace", runtime.newList(ob));
-
-                    final boolean[] continueLoadChain = new boolean[]{false};
-
-                    runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
-                        context,
-                        new Restart.ArgumentGivingRestart("continueLoadChain") { 
-                            public List<String> getArgumentNames() {
-                                return new ArrayList<String>();
-                            }
-
-                            public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                                continueLoadChain[0] = true;
-                                return runtime.nil;
-                            }
-                        },
-                        new Restart.ArgumentGivingRestart("ignoreLoadError") {
-                            public List<String> getArgumentNames() {
-                                return new ArrayList<String>();
-                            }
-
-                            public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                                continueLoadChain[0] = false;
-                                return runtime.nil;
-                            }
-                        }
-                        );
-                    if(!continueLoadChain[0]) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        List<Object> paths = ((IokeList)IokeObject.data(loadPath)).getList();
-
-        String[] suffixes = (name.endsWith(".ik") || name.endsWith(".jar")) ? SUFFIXES_WITH_BLANK : SUFFIXES;
-
-        // Absolute path
-        for(String suffix : suffixes) {
-            String before = "/";
-            if(name.startsWith("/")) {
-                before = "";
-            }
-
-            InputStream is = IokeSystem.class.getResourceAsStream(before + name + suffix);
-            try {
-                File f = new File(name + suffix);
-
-                if(f.exists() && f.isFile()) {
-                    if(loaded.contains(f.getCanonicalPath())) {
-                        return false;
-                    } else {
-                        if(f.getCanonicalPath().endsWith(".jar")) {
-                            context.runtime.classRegistry.getClassLoader().addURL(f.toURI().toURL());
-                        } else {
-                            context.runtime.evaluateFile(f, message, context);
-                        }
-
-                        loaded.add(f.getCanonicalPath());
-                        return true;
-                    }
-                }
-
-                if(null != is) {
-                    if(loaded.contains(name+suffix)) {
-                        return false;
-                    } else {
-                        if((name+suffix).endsWith(".jar")) {
-                            // load jar here - can't do it correctly at the moment, though.
-                        } else {
-                            context.runtime.evaluateStream(name+suffix, new InputStreamReader(is, "UTF-8"), message, context);
-                        }
-                        loaded.add(name+suffix);
-                        return true;
-                    }
-                }
-            } catch(Throwable e) {
-                final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition, 
-                                                                                   message, 
-                                                                                   context, 
-                                                                                   "Error", 
-                                                                                   "Load"), context).mimic(message, context);
-                condition.setCell("message", message);
-                condition.setCell("context", context);
-                condition.setCell("receiver", self);
-                condition.setCell("moduleName", runtime.newText(name));
-                condition.setCell("exceptionMessage", runtime.newText(e.getMessage()));
-                List<Object> ob = new ArrayList<Object>();
-                for(StackTraceElement ste : e.getStackTrace()) {
-                    ob.add(runtime.newText(ste.toString()));
-                }
-
-                condition.setCell("exceptionStackTrace", runtime.newList(ob));
-
-                final boolean[] continueLoadChain = new boolean[]{false};
-
-                runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                        public void run() throws ControlFlow {
-                            runtime.errorCondition(condition);
-                        }}, 
-                    context,
-                    new Restart.ArgumentGivingRestart("continueLoadChain") { 
-                        public List<String> getArgumentNames() {
-                            return new ArrayList<String>();
-                        }
-
-                        public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                            continueLoadChain[0] = true;
-                            return runtime.nil;
-                        }
-                    },
-                    new Restart.ArgumentGivingRestart("ignoreLoadError") {
-                        public List<String> getArgumentNames() {
-                            return new ArrayList<String>();
-                        }
-
-                        public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                            continueLoadChain[0] = false;
-                            return runtime.nil;
-                        }
-                    }
-                    );
-                if(!continueLoadChain[0]) {
-                    return false;
-                }
-            }
-        }
-
-
-
-
-        for(Object o : paths) {
-            String currentS = Text.getText(o);
-
-            for(String suffix : suffixes) {
-                String before = "/";
-                if(name.startsWith("/")) {
-                    before = "";
-                }
-
-                InputStream is = IokeSystem.class.getResourceAsStream(before + name + suffix);
-                try {
-                    File f;
-
-                    if(isAbsoluteFileName(currentS)) {
-                        f = new File(currentS, name + suffix);
-                    } else {
-                        f = new File(new File(currentWorkingDirectory, currentS), name + suffix);
-                    }
-
-//                     System.err.println("trying: " + f);
-
-                    if(f.exists() && f.isFile()) {
-                        if(loaded.contains(f.getCanonicalPath())) {
-                            return false;
-                        } else {
-                            if(f.getCanonicalPath().endsWith(".jar")) {
-                                context.runtime.classRegistry.getClassLoader().addURL(f.toURI().toURL());
-                            } else {
-                                context.runtime.evaluateFile(f, message, context);
-                            }
-
-                            loaded.add(f.getCanonicalPath());
-                            return true;
-                        }
-                    }
-
-                    if(null != is) {
-                        if(loaded.contains(name+suffix)) {
-                            return false;
-                        } else {
-                            if((name+suffix).endsWith(".jar")) {
-                                // load jar here - can't do it correctly at the moment, though.
-                            } else {
-                                context.runtime.evaluateStream(name+suffix, new InputStreamReader(is, "UTF-8"), message, context);
-                            }
-                            loaded.add(name+suffix);
-                            return true;
-                        }
-                    }
-                } catch(Throwable e) {
-                    final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition, 
-                                                                                       message, 
-                                                                                       context, 
-                                                                                       "Error", 
-                                                                                       "Load"), context).mimic(message, context);
-                    condition.setCell("message", message);
-                    condition.setCell("context", context);
-                    condition.setCell("receiver", self);
-                    condition.setCell("moduleName", runtime.newText(name));
-                    condition.setCell("exceptionMessage", runtime.newText(e.getMessage()));
-                    List<Object> ob = new ArrayList<Object>();
-                    for(StackTraceElement ste : e.getStackTrace()) {
-                        ob.add(runtime.newText(ste.toString()));
-                    }
-
-                    condition.setCell("exceptionStackTrace", runtime.newList(ob));
-
-                    final boolean[] continueLoadChain = new boolean[]{false};
-
-                    runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
-                        context,
-                        new Restart.ArgumentGivingRestart("continueLoadChain") { 
-                            public List<String> getArgumentNames() {
-                                return new ArrayList<String>();
-                            }
-
-                            public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                                continueLoadChain[0] = true;
-                                return runtime.nil;
-                            }
-                        },
-                        new Restart.ArgumentGivingRestart("ignoreLoadError") {
-                            public List<String> getArgumentNames() {
-                                return new ArrayList<String>();
-                            }
-
-                            public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                                continueLoadChain[0] = false;
-                                return runtime.nil;
-                            }
-                        }
-                        );
-                    if(!continueLoadChain[0]) {
-                        return false;
-                    }
-                }
-            }
-        }
-        
-        final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition, 
-                                                                           message, 
-                                                                           context, 
-                                                                           "Error", 
-                                                                           "Load"), context).mimic(message, context);
-        condition.setCell("message", message);
-        condition.setCell("context", context);
-        condition.setCell("receiver", self);
-        condition.setCell("moduleName", runtime.newText(name));
-
-        runtime.withReturningRestart("ignoreLoadError", context, new RunnableWithControlFlow() {
-                public void run() throws ControlFlow {
-                    runtime.errorCondition(condition);
-                }});
-        return false;
+        return uses.use(self, context, message, name);
     }
-    
+
     public IokeData cloneData(IokeObject obj, IokeObject m, IokeObject context) {
         return new IokeSystem();
     }
@@ -389,19 +118,11 @@ public class IokeSystem extends IokeData {
 
         obj.setKind("System");
 
-        if(currentWorkingDirectory == null) {
-            // Use the JVM's CWD
-            try {
-                currentWorkingDirectory = new File(".").getCanonicalPath();
-            } catch(Exception e) {
-                currentWorkingDirectory = ".";
-            }
-        }
-
         List<Object> l = new ArrayList<Object>();
         l.add(runtime.newText("."));
         loadPath = runtime.newList(l);
         programArguments = runtime.newList(new ArrayList<Object>());
+        uses = new Uses(loadPath, this.getCurrentWorkingDirectory(), DOSISH);
 
         IokeObject outx = runtime.io.mimic(null, null);
         outx.setData(new IokeIO(runtime.out));

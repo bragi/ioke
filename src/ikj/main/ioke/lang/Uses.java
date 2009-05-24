@@ -159,52 +159,8 @@ public class Uses {
                     }
                 }
             } catch(Throwable e) {
-                final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition,
-                                                                                   message,
-                                                                                   context,
-                                                                                   "Error",
-                                                                                   "Load"), context).mimic(message, context);
-                condition.setCell("message", message);
-                condition.setCell("context", context);
-                condition.setCell("receiver", self);
-                condition.setCell("moduleName", runtime.newText(name));
-                condition.setCell("exceptionMessage", runtime.newText(e.getMessage()));
-                List<Object> ob = new ArrayList<Object>();
-                for(StackTraceElement ste : e.getStackTrace()) {
-                    ob.add(runtime.newText(ste.toString()));
-                }
-
-                condition.setCell("exceptionStackTrace", runtime.newList(ob));
-
-                final boolean[] continueLoadChain = new boolean[]{false};
-
-                runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                        public void run() throws ControlFlow {
-                            runtime.errorCondition(condition);
-                        }},
-                    context,
-                    new Restart.ArgumentGivingRestart("continueLoadChain") {
-                        public List<String> getArgumentNames() {
-                            return new ArrayList<String>();
-                        }
-
-                        public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                            continueLoadChain[0] = true;
-                            return runtime.nil;
-                        }
-                    },
-                    new Restart.ArgumentGivingRestart("ignoreLoadError") {
-                        public List<String> getArgumentNames() {
-                            return new ArrayList<String>();
-                        }
-
-                        public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                            continueLoadChain[0] = false;
-                            return runtime.nil;
-                        }
-                    }
-                    );
-                if(!continueLoadChain[0]) {
+                boolean result = restartLoadingCondition(self, context, message, name, e);
+                if (!result) {
                     return false;
                 }
             }

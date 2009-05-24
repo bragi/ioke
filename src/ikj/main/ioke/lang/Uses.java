@@ -95,8 +95,7 @@ public class Uses {
         return !!continueLoadChain[0];
     }
 
-    public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
-        final Runtime runtime = context.runtime;
+    private boolean findBuiltin(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
         Builtin b = context.runtime.getBuiltin(name);
         if(b != null) {
             if(loaded.contains(name)) {
@@ -113,6 +112,14 @@ public class Uses {
                     }
                 }
             }
+        }
+        return true;
+    }
+
+    public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
+        final Runtime runtime = context.runtime;
+        if(!findBuiltin(self, context, message, name)) {
+            return false;
         }
 
         List<Object> paths = ((IokeList)IokeObject.data(loadPath)).getList();

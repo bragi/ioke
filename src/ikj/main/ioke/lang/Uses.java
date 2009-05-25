@@ -4,6 +4,7 @@
 package ioke.lang;
 
 import ioke.lang.exceptions.ControlFlow;
+import ioke.lang.java.IokeClassLoader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +26,23 @@ public class Uses {
     private IokeObject loadPath;
     private String currentWorkingDirectory;
     private boolean onWindows;
+    private IokeClassLoader classLoader;
+
+    public void setCurrentWorkingDirectory(String currentWorkingDirectory) {
+        this.currentWorkingDirectory = currentWorkingDirectory;
+    }
+
+    public void setLoadPath(IokeObject loadPath) {
+        this.loadPath = loadPath;
+    }
+
+    public void setClassLoader(IokeClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public void setOnWindows(boolean onWindows) {
+        this.onWindows = onWindows;
+    }
 
     public boolean isAbsoluteFileName(String name) {
         if (onWindows) {
@@ -34,10 +52,11 @@ public class Uses {
         }
     }
 
-    public Uses(IokeObject loadPath, String currentWorkingDirectory, boolean onWindows) {
-        this.loadPath = loadPath;
-        this.currentWorkingDirectory = currentWorkingDirectory;
-        this.onWindows = onWindows;
+    public Uses() {
+    }
+
+    private void log(String message) {
+        System.out.println(message);
     }
 
     private boolean restartLoadingCondition(IokeObject self, IokeObject context, IokeObject message, String name, Throwable e) throws ControlFlow {
@@ -126,6 +145,7 @@ public class Uses {
     public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
         final Runtime runtime = context.runtime;
         if (!findBuiltin(self, context, message, name)) {
+            log("Builtin " + message + " found");
             return false;
         }
 
@@ -133,39 +153,52 @@ public class Uses {
 
         String[] suffixes = (name.endsWith(".ik") || name.endsWith(".jar")) ? SUFFIXES_WITH_BLANK : SUFFIXES;
 
-        System.out.println("Trying absolute paths");
+        log("Trying absolute paths");
 
         // Absolute path
         for (String suffix : suffixes) {
-            System.out.println("Trying absolute paths");
-            InputStream is = IokeSystem.class.getResourceAsStream(normalizedPath(name, suffix));
             try {
+                log("Trying to see if file " + name + suffix + " exists");
                 File f = new File(name + suffix);
 
                 if (f.exists() && f.isFile()) {
+                    log("File " + name + suffix + " exists");
                     if (loaded.contains(f.getCanonicalPath())) {
+                        log("File was already loaded as " + f.getCanonicalPath() + ", returning false");
                         return false;
                     } else {
+                        log("File was not loaded before");
                         if (f.getCanonicalPath().endsWith(".jar")) {
-                            context.runtime.classRegistry.getClassLoader().addURL(f.toURI().toURL());
+                            log("File " + f.getCanonicalPath() + " is a jar, putting it in class path");
+                            classLoader.addURL(f.toURI().toURL());
                         } else {
+                            log("File " + f.getCanonicalPath() + "is not a jar, evaluating it now");
                             context.runtime.evaluateFile(f, message, context);
                         }
 
+                        log("Adding file " + f.getCanonicalPath() + " to loaded files and returning true");
                         loaded.add(f.getCanonicalPath());
                         return true;
                     }
                 }
 
+                log("File " + name + suffix + " does not exist, trying resource " + normalizedPath(name, suffix));
+
+                InputStream is = classLoader.getResourceAsStream(name + suffix);
                 if (null != is) {
+                    log("Resource " + name + suffix + " exists");
                     if (loaded.contains(name + suffix)) {
+                        log("Resource " + name + suffix + " is loaded already");
                         return false;
                     } else {
                         if ((name + suffix).endsWith(".jar")) {
                             // load jar here - can't do it correctly at the moment, though.
+                            log("Resource " + name + suffix + " is a jar, do not know how to load it");
                         } else {
+                            log("Resource " + name + suffix + " is not a jar, evaluating it");
                             context.runtime.evaluateStream(name + suffix, new InputStreamReader(is, "UTF-8"), message, context);
                         }
+                        log("Adding resource " + name + suffix + " to loaded files");
                         loaded.add(name + suffix);
                         return true;
                     }

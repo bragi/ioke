@@ -185,6 +185,14 @@ public class Uses {
             return true;
         }
     }
+    
+    private List<String> loadPaths(IokeObject loadPath) {
+    	List<String> result = new ArrayList<String>();
+    	for(Object o : ((IokeList) IokeObject.data(loadPath)).getList()) {
+    		result.add(Text.getText(o));
+    	}
+    	return result;
+    }
 
     public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
         final Runtime runtime = context.runtime;
@@ -216,30 +224,21 @@ public class Uses {
             }
         }
 
-
-
-        List<Object> paths = ((IokeList) IokeObject.data(loadPath)).getList();
-
-        for (Object o : paths) {
-            String currentS = Text.getText(o);
-
+        for (String path : loadPaths(loadPath)) {
             for (String suffix : suffixes) {
                 String before = "/";
                 if (name.startsWith("/")) {
                     before = "";
                 }
 
-                InputStream is = IokeSystem.class.getResourceAsStream(before + name + suffix);
                 try {
                     File f;
 
-                    if (isAbsoluteFileName(currentS)) {
-                        f = new File(currentS, name + suffix);
+                    if (isAbsoluteFileName(path)) {
+                        f = new File(path, name + suffix);
                     } else {
-                        f = new File(new File(currentWorkingDirectory, currentS), name + suffix);
+                        f = new File(new File(currentWorkingDirectory, path), name + suffix);
                     }
-
-//                     System.err.println("trying: " + f);
 
                     if (f.exists() && f.isFile()) {
                         if (loaded.contains(f.getCanonicalPath())) {
@@ -252,20 +251,6 @@ public class Uses {
                             }
 
                             loaded.add(f.getCanonicalPath());
-                            return true;
-                        }
-                    }
-
-                    if (null != is) {
-                        if (loaded.contains(name + suffix)) {
-                            return false;
-                        } else {
-                            if ((name + suffix).endsWith(".jar")) {
-                                // load jar here - can't do it correctly at the moment, though.
-                            } else {
-                                context.runtime.evaluateStream(name + suffix, new InputStreamReader(is, "UTF-8"), message, context);
-                            }
-                            loaded.add(name + suffix);
                             return true;
                         }
                     }

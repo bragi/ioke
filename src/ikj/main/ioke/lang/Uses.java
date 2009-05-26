@@ -5,7 +5,9 @@ package ioke.lang;
 
 import ioke.lang.exceptions.ControlFlow;
 import ioke.lang.java.IokeClassLoader;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -117,7 +119,7 @@ public class Uses {
     	return runtime.getBuiltin(name);
     }
 
-    private boolean findBuiltin(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
+    private boolean useBuiltin(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
 
     	Builtin b = builtinForName(context.runtime, name);
 
@@ -145,64 +147,66 @@ public class Uses {
             return "/" + name + suffix;
         }
     }
+    
+    private boolean canUseFile(File f) {
+    	return f.exists() && f.isFile();
+    }
+    
+    private boolean useFile(File f, IokeObject message, IokeObject context) throws IOException, ControlFlow {
+    	String canonicalPath = f.getCanonicalPath(); 
+        if (loaded.contains(canonicalPath)) {
+            return false;
+        } else {
+            if (canonicalPath.endsWith(".jar")) {
+                classLoader.addURL(f.toURI().toURL());
+            } else {
+                context.runtime.evaluateFile(f, message, context);
+            }
+
+            loaded.add(canonicalPath);
+            return true;
+        }
+    }
+    
+    private boolean canUseResource(String resourceName) {
+    	return classLoader.getResourceAsStream(resourceName) != null;
+    }
+    
+    private boolean useResource(String resourceName, IokeObject message, IokeObject context) throws IOException, ControlFlow {
+        if (loaded.contains(resourceName)) {
+            return false;
+        } else {
+            if ((resourceName).endsWith(".jar")) {
+                // load jar here - can't do it correctly at the moment, though.
+            } else {
+                context.runtime.evaluateStream(resourceName, new InputStreamReader(classLoader.getResourceAsStream(resourceName), "UTF-8"), message, context);
+            }
+            loaded.add(resourceName);
+            return true;
+        }
+    }
 
     public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
         final Runtime runtime = context.runtime;
         if(builtinForName(runtime, name) != null) {
-        	return findBuiltin(self, context, message, name);
+        	return useBuiltin(self, context, message, name);
         }
 
         String[] suffixes = (name.endsWith(".ik") || name.endsWith(".jar")) ? SUFFIXES_WITH_BLANK : SUFFIXES;
 
-        log("Trying absolute paths");
-
         // Absolute path
         for (String suffix : suffixes) {
             try {
-                log("Trying to see if file " + name + suffix + " exists");
-                File f = new File(name + suffix);
+            	String resourceName = name + suffix;
+            	
+                File f = new File(resourceName);
 
-                if (f.exists() && f.isFile()) {
-                    log("File " + name + suffix + " exists");
-                    if (loaded.contains(f.getCanonicalPath())) {
-                        log("File was already loaded as " + f.getCanonicalPath() + ", returning false");
-                        return false;
-                    } else {
-                        log("File was not loaded before");
-                        if (f.getCanonicalPath().endsWith(".jar")) {
-                            log("File " + f.getCanonicalPath() + " is a jar, putting it in class path");
-                            classLoader.addURL(f.toURI().toURL());
-                        } else {
-                            log("File " + f.getCanonicalPath() + "is not a jar, evaluating it now");
-                            context.runtime.evaluateFile(f, message, context);
-                        }
-
-                        log("Adding file " + f.getCanonicalPath() + " to loaded files and returning true");
-                        loaded.add(f.getCanonicalPath());
-                        return true;
-                    }
+                if (canUseFile(f)) {
+                	return useFile(f, message, context);
                 }
-
-                log("File " + name + suffix + " does not exist, trying resource " + normalizedPath(name, suffix));
-
-                InputStream is = classLoader.getResourceAsStream(name + suffix);
-                if (null != is) {
-                    log("Resource " + name + suffix + " exists");
-                    if (loaded.contains(name + suffix)) {
-                        log("Resource " + name + suffix + " is loaded already");
-                        return false;
-                    } else {
-                        if ((name + suffix).endsWith(".jar")) {
-                            // load jar here - can't do it correctly at the moment, though.
-                            log("Resource " + name + suffix + " is a jar, do not know how to load it");
-                        } else {
-                            log("Resource " + name + suffix + " is not a jar, evaluating it");
-                            context.runtime.evaluateStream(name + suffix, new InputStreamReader(is, "UTF-8"), message, context);
-                        }
-                        log("Adding resource " + name + suffix + " to loaded files");
-                        loaded.add(name + suffix);
-                        return true;
-                    }
+                
+                if (canUseResource(resourceName)) {
+                	return useResource(resourceName, message, context);
                 }
             } catch (Throwable e) {
                 boolean result = restartLoadingCondition(self, context, message, name, e);

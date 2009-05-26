@@ -149,8 +149,6 @@ public class Uses {
             return false;
         }
 
-        List<Object> paths = ((IokeList) IokeObject.data(loadPath)).getList();
-
         String[] suffixes = (name.endsWith(".ik") || name.endsWith(".jar")) ? SUFFIXES_WITH_BLANK : SUFFIXES;
 
         log("Trying absolute paths");
@@ -213,6 +211,7 @@ public class Uses {
 
 
 
+        List<Object> paths = ((IokeList) IokeObject.data(loadPath)).getList();
 
         for (Object o : paths) {
             String currentS = Text.getText(o);

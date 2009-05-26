@@ -230,6 +230,76 @@ describe("operator",
       )
     )
 
+    describe("≤", 
+      it("should be translated correctly inside a method definition", 
+        m = parse("method(1 ≤ 2)")
+        m should == "method(1 ≤(2))"
+      )
+
+      it("should be translated correctly inside a nested method definition", 
+        m = parse("method(method(1 ≤ 2))")
+        m should == "method(method(1 ≤(2)))"
+      )
+
+      it("should be translated correctly inside a method definition with something else", 
+        m = parse("method(n, if(1 ≤ 2, n, n))")
+        m should == "method(n, if(1 ≤(2), n, n))"
+      )
+      
+      it("should be translated correctly in infix", 
+        m = parse("1 ≤ 2")
+        m should == "1 ≤(2)"
+      )
+
+      it("should be translated correctly with parenthesis", 
+        m = parse("1 ≤(2)")
+        m should == "1 ≤(2)"
+
+        m = parse("1 ≤(2)")
+        m should == "1 ≤(2)"
+      )
+
+      it("should be translated correctly with spaces", 
+        m = parse("1 ≤ 2")
+        m should == "1 ≤(2)"
+      )
+    )
+    
+    describe("≥", 
+      it("should be translated correctly inside a method definition", 
+        m = parse("method(1 ≥ 2)")
+        m should == "method(1 ≥(2))"
+      )
+
+      it("should be translated correctly inside a nested method definition", 
+        m = parse("method(method(1 ≥ 2))")
+        m should == "method(method(1 ≥(2)))"
+      )
+
+      it("should be translated correctly inside a method definition with something else", 
+        m = parse("method(n, if(1 ≥ 2, n, n))")
+        m should == "method(n, if(1 ≥(2), n, n))"
+      )
+      
+      it("should be translated correctly in infix", 
+        m = parse("1 ≥ 2")
+        m should == "1 ≥(2)"
+      )
+
+      it("should be translated correctly with parenthesis", 
+        m = parse("1 ≥(2)")
+        m should == "1 ≥(2)"
+
+        m = parse("1 ≥(2)")
+        m should == "1 ≥(2)"
+      )
+
+      it("should be translated correctly with spaces", 
+        m = parse("1 ≥ 2")
+        m should == "1 ≥(2)"
+      )
+    )
+
     describe("!=", 
       it("should be translated correctly inside a method definition", 
         m = parse("method(1!=2)")
@@ -265,6 +335,40 @@ describe("operator",
       )
     )
 
+    describe("≠", 
+      it("should be translated correctly inside a method definition", 
+        m = parse("method(1 ≠ 2)")
+        m should == "method(1 ≠(2))"
+      )
+
+      it("should be translated correctly inside a nested method definition", 
+        m = parse("method(method(1 ≠ 2))")
+        m should == "method(method(1 ≠(2)))"
+      )
+
+      it("should be translated correctly inside a method definition with something else", 
+        m = parse("method(n, if(1 ≠ 2, n, n))")
+        m should == "method(n, if(1 ≠(2), n, n))"
+      )
+      
+      it("should be translated correctly in infix", 
+        m = parse("1 ≠ 2")
+        m should == "1 ≠(2)"
+      )
+
+      it("should be translated correctly with parenthesis", 
+        m = parse("1 ≠(2)")
+        m should == "1 ≠(2)"
+
+        m = parse("1 ≠(2)")
+        m should == "1 ≠(2)"
+      )
+
+      it("should be translated correctly with spaces", 
+        m = parse("1 ≠ 2")
+        m should == "1 ≠(2)"
+      )
+    )
 
     describe("==", 
       it("should be translated correctly inside a method definition", 
@@ -2892,6 +2996,19 @@ describe("operator",
       (223524534<=223524534) should be true
     )
   )
+
+  describe("≤", 
+    it("should work for numbers", 
+      (0 ≤ 0) should be true
+      (0 ≤ 1) should be true
+      (1 ≤ 1) should be true
+      (1 ≤ 2) should be true
+      (2 ≤ 2) should be true
+      (3 ≤ 2) should be false
+      (3 ≤ 223524534) should be true
+      (223524534 ≤ 223524534) should be true
+    )
+  )
   
   describe(">", 
     it("should work for numbers", 
@@ -2923,6 +3040,21 @@ describe("operator",
     )
   )
 
+  describe("≥", 
+    it("should work for numbers", 
+      (0 ≥ 0) should be true
+      (0 ≥ 1) should be false
+      (1 ≥ 0) should be true
+      (1 ≥ 1) should be true
+      (2 ≥ 1) should be true
+      (2 ≥ 2) should be true
+      (3 ≥ 2) should be true
+      (3 ≥ 223524534) should be false
+      (223524534 ≥ 3) should be true
+      (223524534 ≥ 223524534) should be true
+    )
+  )
+
   describe("==", 
     it("should work for numbers", 
       (0==0) should be true
@@ -2950,6 +3082,21 @@ describe("operator",
       (3!=223524534) should be true
       (223524534!=3) should be true
       (223524534!=223524534) should be false
+    )
+  )
+
+  describe("≠", 
+    it("should work for numbers", 
+      (0 ≠ 0) should be false
+      (0 ≠ 1) should be true
+      (1 ≠ 0) should be true
+      (1 ≠ 1) should be false
+      (2 ≠ 1) should be true
+      (2 ≠ 2) should be false
+      (3 ≠ 2) should be true
+      (3 ≠ 223524534) should be true
+      (223524534 ≠ 3) should be true
+      (223524534 ≠ 223524534) should be false
     )
   )
 )

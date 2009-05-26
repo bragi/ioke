@@ -58,7 +58,7 @@ public class Uses {
     private void log(String message) {
         System.out.println(message);
     }
-
+    
     private boolean restartLoadingCondition(IokeObject self, IokeObject context, IokeObject message, String name, Throwable e) throws ControlFlow {
         final Runtime runtime = self.runtime;
 
@@ -112,22 +112,26 @@ public class Uses {
                 });
         return ! !continueLoadChain[0];
     }
+    
+    private Builtin builtinForName(Runtime runtime, String name) {
+    	return runtime.getBuiltin(name);
+    }
 
     private boolean findBuiltin(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
-        Builtin b = context.runtime.getBuiltin(name);
-        if (b != null) {
-            if (loaded.contains(name)) {
-                return false;
-            } else {
-                try {
-                    b.load(context.runtime, context, message);
-                    loaded.add(name);
-                    return true;
-                } catch (Throwable e) {
-                    boolean result = restartLoadingCondition(self, context, message, name, e);
-                    if (!result) {
-                        return false;
-                    }
+
+    	Builtin b = builtinForName(context.runtime, name);
+
+        if (loaded.contains(name)) {
+            return false;
+        } else {
+            try {
+                b.load(context.runtime, context, message);
+                loaded.add(name);
+                return true;
+            } catch (Throwable e) {
+                boolean result = restartLoadingCondition(self, context, message, name, e);
+                if (!result) {
+                    return false;
                 }
             }
         }
@@ -144,9 +148,8 @@ public class Uses {
 
     public boolean use(IokeObject self, IokeObject context, IokeObject message, String name) throws ControlFlow {
         final Runtime runtime = context.runtime;
-        if (!findBuiltin(self, context, message, name)) {
-            log("Builtin " + message + " found");
-            return false;
+        if(builtinForName(runtime, name) != null) {
+        	return findBuiltin(self, context, message, name);
         }
 
         String[] suffixes = (name.endsWith(".ik") || name.endsWith(".jar")) ? SUFFIXES_WITH_BLANK : SUFFIXES;

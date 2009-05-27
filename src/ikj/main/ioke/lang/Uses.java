@@ -8,7 +8,9 @@ import ioke.lang.java.IokeClassLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,10 +58,6 @@ public class Uses {
     public Uses() {
     }
 
-    private void log(String message) {
-        System.out.println(message);
-    }
-    
     private boolean restartLoadingCondition(IokeObject self, IokeObject context, IokeObject message, String name, Throwable e) throws ControlFlow {
         final Runtime runtime = self.runtime;
 
@@ -139,21 +137,27 @@ public class Uses {
         return true;
     }
 
-    private String normalizedPath(String name, String suffix) {
-        if(name.startsWith(("/"))) {
-            return name + suffix;
-        } else {
-            return "/" + name + suffix;
-        }
-    }
-    
     private boolean canUseFile(File f) {
     	return f.exists() && f.isFile();
     }
     
-    private void useJar(File f) throws IOException {
+    private void evaluateJarInitFile(File f, IokeObject message, IokeObject context) throws ControlFlow {
+    	try {
+        	URL url = new URL("jar:" + f.toURI().toURL().toString() + "!/init.ik");
+        	InputStream is = url.openStream();
+        	if(is != null){
+        		context.runtime.evaluateStream(url.toString(), new InputStreamReader(is, "UTF-8"), message, context);    		
+        	}
+    	} catch(IOException e) {
+    		// Hopefully the init.ik file does not exist, let's ignore it
+    	}
+    	 
+    }
+    
+    private void useJar(File f, IokeObject message, IokeObject context) throws IOException, ControlFlow {
     	classLoader.addURL(f.toURI().toURL());
     	loaded.add(f.getCanonicalPath());
+    	evaluateJarInitFile(f, message, context);
     }
     
     private boolean useFile(File f, IokeObject message, IokeObject context) throws IOException, ControlFlow {
@@ -162,7 +166,7 @@ public class Uses {
             return false;
         } else {
             if (canonicalPath.endsWith(".jar")) {
-                useJar(f);
+                useJar(f, message, context);
             } else {
                 context.runtime.evaluateFile(f, message, context);
                 loaded.add(canonicalPath);

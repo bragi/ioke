@@ -8,7 +8,6 @@ import ioke.lang.java.IokeClassLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -152,18 +151,22 @@ public class Uses {
     	return f.exists() && f.isFile();
     }
     
+    private void useJar(File f) throws IOException {
+    	classLoader.addURL(f.toURI().toURL());
+    	loaded.add(f.getCanonicalPath());
+    }
+    
     private boolean useFile(File f, IokeObject message, IokeObject context) throws IOException, ControlFlow {
     	String canonicalPath = f.getCanonicalPath(); 
         if (loaded.contains(canonicalPath)) {
             return false;
         } else {
             if (canonicalPath.endsWith(".jar")) {
-                classLoader.addURL(f.toURI().toURL());
+                useJar(f);
             } else {
                 context.runtime.evaluateFile(f, message, context);
+                loaded.add(canonicalPath);
             }
-
-            loaded.add(canonicalPath);
             return true;
         }
     }
@@ -226,11 +229,6 @@ public class Uses {
 
         for (String path : loadPaths(loadPath)) {
             for (String suffix : suffixes) {
-                String before = "/";
-                if (name.startsWith("/")) {
-                    before = "";
-                }
-
                 try {
                     File f;
 
@@ -240,19 +238,8 @@ public class Uses {
                         f = new File(new File(currentWorkingDirectory, path), name + suffix);
                     }
 
-                    if (f.exists() && f.isFile()) {
-                        if (loaded.contains(f.getCanonicalPath())) {
-                            return false;
-                        } else {
-                            if (f.getCanonicalPath().endsWith(".jar")) {
-                                context.runtime.classRegistry.getClassLoader().addURL(f.toURI().toURL());
-                            } else {
-                                context.runtime.evaluateFile(f, message, context);
-                            }
-
-                            loaded.add(f.getCanonicalPath());
-                            return true;
-                        }
+                    if (canUseFile(f)) {
+                    	return useFile(f, message, context);
                     }
                 } catch (Throwable e) {
                     boolean result = restartLoadingCondition(self, context, message, name, e);

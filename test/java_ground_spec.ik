@@ -120,6 +120,19 @@ describe("JavaGround",
       use jar("test/jars/JarFileTest4")
       ioke:lang:test:JarFileTest4
     )
+    
+    it("should be possible to use ik file in jar file",
+      use("test/jars/JarFileTest8.jar")
+      use("source_in_jar")
+    )
+
+    it("should call init.ik from used jar file",
+      use("test/jars/JarFileTest9.jar")
+      initJarFile should == 1
+      use("test/jars/JarFileTest10.jar")
+      initJarFile should == 2
+      initJarFile2 should == 2
+    )
   )
 )
 

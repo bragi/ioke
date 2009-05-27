@@ -120,6 +120,11 @@ describe("JavaGround",
       use jar("test/jars/JarFileTest4")
       ioke:lang:test:JarFileTest4
     )
+    
+    it("should be possible to use ik file in jar file",
+      use("test/jars/JarFileTest8.jar")
+      use("source_in_jar")
+    )
   )
 )
 

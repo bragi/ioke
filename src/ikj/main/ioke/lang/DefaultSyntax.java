@@ -174,21 +174,14 @@ public class DefaultSyntax extends IokeData implements Named, Inspectable, Assoc
         }
     }
 
+    public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on)  throws ControlFlow {
+    	return context.runtime.errorNotActivatableCondition(method, context, message, on,
+    			"You tried to activate a method without any code - did you by any chance activate the DefaultSyntax kind by referring to it without wrapping it inside a call to cell?");
+    }
+
     private Object expand(final IokeObject self, IokeObject context, IokeObject message, Object on, Map<String, Object> data) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                         message, 
-                                                                         context, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), context).mimic(message, context);
-            condition.setCell("message", message);
-            condition.setCell("context", context);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the DefaultSyntax kind by referring to it without wrapping it inside a call to cell?"));
-            context.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, context, message, on);
         }
 
         IokeObject c = context.runtime.locals.mimic(message, context);
@@ -228,19 +221,7 @@ public class DefaultSyntax extends IokeData implements Named, Inspectable, Assoc
 
     private Object expandWithCall(final IokeObject self, IokeObject context, IokeObject message, Object on, Object call, Map<String, Object> data) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                         message, 
-                                                                         context, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), context).mimic(message, context);
-            condition.setCell("message", message);
-            condition.setCell("context", context);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the DefaultSyntax kind by referring to it without wrapping it inside a call to cell?"));
-            context.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, context, message, on);
         }
 
         IokeObject c = context.runtime.locals.mimic(message, context);

@@ -1125,6 +1125,22 @@ public class Runtime {
             throw new ControlFlow.Exit();
         }
     }
+    
+    public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on, String report) throws ControlFlow {
+        IokeObject condition = IokeObject.as(IokeObject.getCellChain(this.condition, 
+          message, 
+          context, 
+          "Error", 
+          "Invocation",
+          "NotActivatable"), context).mimic(message, context);
+        condition.setCell("message", message);
+        condition.setCell("context", context);
+        condition.setCell("receiver", on);
+        condition.setCell("method", method);
+        condition.setCell("report", newText(report));
+        errorCondition(condition);
+        return this.nil;
+    }
 
     public static void init(IokeObject runtime) {
         runtime.setKind("Runtime");

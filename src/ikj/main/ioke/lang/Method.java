@@ -96,23 +96,15 @@ public class Method extends IokeData implements Named, Inspectable {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on)  throws ControlFlow {
+    	return context.runtime.errorNotActivatableCondition(method, context, message, on, 
+    			"You tried to activate a method without any code - did you by any chance activate the Method kind by referring to it without wrapping it inside a call to cell?");
+    }
 
     @Override
-    public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-        IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                     message, 
-                                                                     context, 
-                                                                     "Error", 
-                                                                     "Invocation",
-                                                                     "NotActivatable"), context).mimic(message, context);
-        condition.setCell("message", message);
-        condition.setCell("context", context);
-        condition.setCell("receiver", on);
-        condition.setCell("method", self);
-        condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the Method kind by referring to it without wrapping it inside a call to cell?"));
-        context.runtime.errorCondition(condition);
-
-        return self.runtime.nil;
+    public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
+        return errorNotActivatableCondition(method, context, message, on);
     }
 
     public static String getInspect(Object on) {

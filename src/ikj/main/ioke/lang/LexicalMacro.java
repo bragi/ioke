@@ -178,22 +178,16 @@ public class LexicalMacro extends IokeData implements AssociatedCode, Named, Ins
         }
     }
 
+    public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on)  throws ControlFlow {
+    	return context.runtime.errorNotActivatableCondition(method, context, message, on,
+    			"You tried to activate a method without any code - did you by any chance activate the LexicalMacro kind by referring to it without wrapping it inside a call to cell?");
+    }
+
+
     @Override
     public Object activateWithCallAndData(final IokeObject self, IokeObject dynamicContext, IokeObject message, Object on, Object call, Map<String, Object> data) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(dynamicContext.runtime.condition, 
-                                                                         message, 
-                                                                         dynamicContext, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), dynamicContext).mimic(message, dynamicContext);
-            condition.setCell("message", message);
-            condition.setCell("context", dynamicContext);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", dynamicContext.runtime.newText("You tried to activate a method without any code - did you by any chance activate the LexicalMacro kind by referring to it without wrapping it inside a call to cell?"));
-            dynamicContext.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, dynamicContext, message, on);
         }
 
         LexicalContext c = new LexicalContext(self.runtime, on, "Lexical macro activation context", message, this.context);
@@ -211,19 +205,7 @@ public class LexicalMacro extends IokeData implements AssociatedCode, Named, Ins
     @Override
     public Object activateWithCall(IokeObject self, IokeObject dynamicContext, IokeObject message, Object on, Object call) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(dynamicContext.runtime.condition, 
-                                                                         message, 
-                                                                         dynamicContext, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), dynamicContext).mimic(message, dynamicContext);
-            condition.setCell("message", message);
-            condition.setCell("context", dynamicContext);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", dynamicContext.runtime.newText("You tried to activate a method without any code - did you by any chance activate the LexicalMacro kind by referring to it without wrapping it inside a call to cell?"));
-            dynamicContext.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, dynamicContext, message, on);
         }
 
         LexicalContext c = new LexicalContext(self.runtime, on, "Lexical macro activation context", message, this.context);
@@ -237,19 +219,7 @@ public class LexicalMacro extends IokeData implements AssociatedCode, Named, Ins
     @Override
     public Object activate(IokeObject self, IokeObject dynamicContext, IokeObject message, Object on) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(dynamicContext.runtime.condition, 
-                                                                         message, 
-                                                                         dynamicContext, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), dynamicContext).mimic(message, dynamicContext);
-            condition.setCell("message", message);
-            condition.setCell("context", dynamicContext);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", dynamicContext.runtime.newText("You tried to activate a method without any code - did you by any chance activate the LexicalMacro kind by referring to it without wrapping it inside a call to cell?"));
-            dynamicContext.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, dynamicContext, message, on);
         }
 
         LexicalContext c = new LexicalContext(self.runtime, on, "Lexical macro activation context", message, this.context);
@@ -263,19 +233,7 @@ public class LexicalMacro extends IokeData implements AssociatedCode, Named, Ins
     @Override
     public Object activateWithData(IokeObject self, IokeObject dynamicContext, IokeObject message, Object on, Map<String, Object> data) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(dynamicContext.runtime.condition, 
-                                                                         message, 
-                                                                         dynamicContext, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), dynamicContext).mimic(message, dynamicContext);
-            condition.setCell("message", message);
-            condition.setCell("context", dynamicContext);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", dynamicContext.runtime.newText("You tried to activate a method without any code - did you by any chance activate the LexicalMacro kind by referring to it without wrapping it inside a call to cell?"));
-            dynamicContext.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, dynamicContext, message, on);
         }
 
         LexicalContext c = new LexicalContext(self.runtime, on, "Lexical macro activation context", message, this.context);

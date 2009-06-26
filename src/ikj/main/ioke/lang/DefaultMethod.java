@@ -95,6 +95,12 @@ public class DefaultMethod extends Method implements AssociatedCode {
         }
     }
 
+    @Override
+    public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on)  throws ControlFlow {
+    	return context.runtime.errorNotActivatableCondition(method, context, message, on,
+    			"You tried to activate a method without any code - did you by any chance activate the DefaultMethod kind by referring to it without wrapping it inside a call to cell?");
+    }
+
     private IokeObject createSuperCallFor(final IokeObject out_self, final IokeObject out_context, final IokeObject out_message, final Object out_on, final Object out_superCell) throws ControlFlow {
         return out_context.runtime.newNativeMethod("will call the super method of the current message on the same receiver", new NativeMethod("super") {
                 private final DefaultArgumentsDefinition ARGUMENTS = DefaultArgumentsDefinition
@@ -121,19 +127,7 @@ public class DefaultMethod extends Method implements AssociatedCode {
     @Override
     public Object activateWithCall(final IokeObject self, IokeObject context, IokeObject message, Object on, Object call) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                         message, 
-                                                                         context, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), context).mimic(message, context);
-            condition.setCell("message", message);
-            condition.setCell("context", context);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the DefaultMethod kind by referring to it without wrapping it inside a call to cell?"));
-            context.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, context, message, on);
         }
 
 
@@ -177,19 +171,7 @@ public class DefaultMethod extends Method implements AssociatedCode {
     @Override
     public Object activateWithCallAndData(final IokeObject self, IokeObject context, IokeObject message, Object on, Object call, Map<String, Object> data) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                         message, 
-                                                                         context, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), context).mimic(message, context);
-            condition.setCell("message", message);
-            condition.setCell("context", context);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the DefaultMethod kind by referring to it without wrapping it inside a call to cell?"));
-            context.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, context, message, on);
         }
 
 
@@ -237,19 +219,7 @@ public class DefaultMethod extends Method implements AssociatedCode {
     @Override
     public Object activate(final IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                         message, 
-                                                                         context, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), context).mimic(message, context);
-            condition.setCell("message", message);
-            condition.setCell("context", context);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the DefaultMethod kind by referring to it without wrapping it inside a call to cell?"));
-            context.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, context, message, on);
         }
 
 
@@ -293,19 +263,7 @@ public class DefaultMethod extends Method implements AssociatedCode {
     @Override
     public Object activateWithData(final IokeObject self, IokeObject context, IokeObject message, Object on, Map<String, Object> data) throws ControlFlow {
         if(code == null) {
-            IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                         message, 
-                                                                         context, 
-                                                                         "Error", 
-                                                                         "Invocation",
-                                                                         "NotActivatable"), context).mimic(message, context);
-            condition.setCell("message", message);
-            condition.setCell("context", context);
-            condition.setCell("receiver", on);
-            condition.setCell("method", self);
-            condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the DefaultMethod kind by referring to it without wrapping it inside a call to cell?"));
-            context.runtime.errorCondition(condition);
-            return null;
+        	return errorNotActivatableCondition(self, context, message, on);
         }
 
 

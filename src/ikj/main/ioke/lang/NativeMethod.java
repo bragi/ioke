@@ -72,23 +72,15 @@ public abstract class NativeMethod extends Method {
         return activate(self, on, args, keywords, context, message);
     }
 
+    @Override
+    public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on)  throws ControlFlow {
+    	return context.runtime.errorNotActivatableCondition(method, context, message, on,
+    			"You tried to activate a method without any code - did you by any chance activate the NativeMethod kind by referring to it without wrapping it inside a call to cell?");
+    }
+
     public Object activate(IokeObject self, Object on, List<Object> args,
             Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-        IokeObject condition = IokeObject.as(IokeObject.getCellChain(context.runtime.condition, 
-                                                                     message, 
-                                                                     context, 
-                                                                     "Error", 
-                                                                     "Invocation",
-                                                                     "NotActivatable"), context).mimic(message, context);
-        
-        condition.setCell("message", message);
-        condition.setCell("context", context);
-        condition.setCell("receiver", on);
-        condition.setCell("method", self);
-        condition.setCell("report", context.runtime.newText("You tried to activate a method without any code - did you by any chance activate the NativeMethod kind by referring to it without wrapping it inside a call to cell?"));
-        context.runtime.errorCondition(condition);
-
-        return self.runtime.nil;
+    	return errorNotActivatableCondition(self, context, message, on);
     }
     
     private String getDominantClassName() {

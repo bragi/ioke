@@ -414,10 +414,7 @@ public class FileSystem {
                         condition.setCell("receiver", on);
                         condition.setCell("text", runtime.newText(msg));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
 
                     if(args.size() > 1 && IokeObject.isTrue(args.get(1))) {
@@ -473,10 +470,7 @@ public class FileSystem {
                         condition.setCell("receiver", on);
                         condition.setCell("text", runtime.newText(msg));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
 
                     f.delete();
@@ -528,10 +522,7 @@ public class FileSystem {
                         condition.setCell("receiver", on);
                         condition.setCell("text", runtime.newText(msg));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
 
                     f.delete();

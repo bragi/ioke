@@ -579,10 +579,7 @@ public class Text extends IokeData {
 
             final Object[] newCell = new Object[]{null};
 
-            runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        runtime.errorCondition(condition);
-                    }}, 
+            runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("takeLongest") { 
@@ -652,10 +649,7 @@ public class Text extends IokeData {
 
             final Object[] newCell = new Object[]{null};
 
-            runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        runtime.errorCondition(condition);
-                    }}, 
+            runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("takeLongest") { 

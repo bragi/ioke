@@ -415,10 +415,7 @@ public class Number extends IokeData {
 
                             final Object[] newCell = new Object[]{arg};
 
-                            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                                    public void run() throws ControlFlow {
-                                        context.runtime.errorCondition(condition);
-                                    }}, 
+                            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                                 context,
                                 new Restart.UseValueRestart(newCell));
                         

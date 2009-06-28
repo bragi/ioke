@@ -93,10 +93,7 @@ public class ConditionsBehavior {
                         condition.setCell("context", context);
                         condition.setCell("receiver", on);
                         condition.setCell("extra", runtime.newList(args.subList(4, argCount)));
-                        runtime.withReturningRestart("ignoreExtraArguments", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignoreExtraArguments", context, new RunnableWithErrorCondition(condition));
                         argCount = 4;
                     } else if(argCount < 1) {
                         final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition, 
@@ -137,10 +134,7 @@ public class ConditionsBehavior {
                                 extra.add(runtime.newText(n));
                                 condition.setCell("extra", runtime.newList(extra));
                                 
-                                runtime.withReturningRestart("ignoreExtraKeywords", context, new RunnableWithControlFlow() {
-                                        public void run() throws ControlFlow {
-                                            runtime.errorCondition(condition);
-                                        }});
+                                runtime.withReturningRestart("ignoreExtraKeywords", context, new RunnableWithErrorCondition(condition));
                             }
                         } else {
                             if(code != null) {
@@ -313,10 +307,7 @@ public class ConditionsBehavior {
                         
                                     final Object[] newCell = new Object[]{bindable};
                         
-                                    runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                                            public void run() throws ControlFlow {
-                                                runtime.errorCondition(condition);
-                                            }}, 
+                                    runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                                         context,
                                         new Restart.UseValueRestart(newCell));
                                     bindable = IokeObject.as(newCell[0], context);
@@ -398,10 +389,7 @@ public class ConditionsBehavior {
                             condition.setCell("receiver", on);
                             condition.setCell("restart", restart);
                             
-                            runtime.withReturningRestart("ignoreMissingRestart", context, new RunnableWithControlFlow() {
-                                    public void run() throws ControlFlow {
-                                        runtime.errorCondition(condition);
-                                    }});
+                            runtime.withReturningRestart("ignoreMissingRestart", context, new RunnableWithErrorCondition(condition));
                             return runtime.nil;
                         }
                     } else {
@@ -417,10 +405,7 @@ public class ConditionsBehavior {
                             condition.setCell("receiver", on);
                             condition.setCell("restart", restart);
                             
-                            runtime.withReturningRestart("ignoreMissingRestart", context, new RunnableWithControlFlow() {
-                                    public void run() throws ControlFlow {
-                                        runtime.errorCondition(condition);
-                                    }});
+                            runtime.withReturningRestart("ignoreMissingRestart", context, new RunnableWithErrorCondition(condition));
                             return runtime.nil;
                         }
                     }
@@ -467,10 +452,7 @@ public class ConditionsBehavior {
                         
                         final Object[] newCell = new Object[]{restart};
                         
-                        runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }}, 
+                        runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                             context,
                             new Restart.UseValueRestart(newCell));
                         restart = IokeObject.as(newCell[0], context);

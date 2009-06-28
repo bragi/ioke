@@ -39,7 +39,7 @@ public class Runtime {
     PrintWriter out;
     PrintWriter err;
     Reader in;
-    
+
     public IokeRegistry registry = new IokeRegistry(this);
     public ClassRegistry classRegistry = new ClassRegistry(this);
 
@@ -142,7 +142,7 @@ public class Runtime {
     public IokeObject binXorMessage = newMessage("^");
     public IokeObject lshMessage = newMessage("<<");
     public IokeObject rshMessage = newMessage(">>");
-    public IokeObject ltMessage = newMessage("<"); 
+    public IokeObject ltMessage = newMessage("<");
     public IokeObject lteMessage = newMessage("<=");
     public IokeObject gtMessage = newMessage(">");
     public IokeObject gteMessage = newMessage(">=");
@@ -210,7 +210,7 @@ public class Runtime {
         _false.init();
         text.init();
         symbol.init();
-        number.init(); 
+        number.init();
         range.init();
         pair.init();
         dateTime.init();
@@ -307,7 +307,7 @@ public class Runtime {
                     return ioke.lang.extensions.readline.Readline.create(runtime);
                 }
             });
-        
+
         try {
             evaluateString("use(\"builtin/A05_conditions\")", message, ground);
             evaluateString("use(\"builtin/A10_defaultBehavior\")", message, ground);
@@ -423,7 +423,7 @@ public class Runtime {
     public IokeObject getRestart() {
         return this.restart;
     }
- 
+
     public IokeObject getCondition() {
         return this.condition;
     }
@@ -461,7 +461,7 @@ public class Runtime {
     }
 
     private Map<String, Builtin> builtins = new HashMap<String, Builtin>();
-    
+
     public void addBuiltinScript(String name, Builtin builtin) {
         builtins.put(name, builtin);
     }
@@ -543,10 +543,10 @@ public class Runtime {
     }
 
     public void reportNativeException(Exception e, IokeObject message, IokeObject context) throws ControlFlow {
-        final IokeObject condition = IokeObject.as(IokeObject.getCellChain(this.condition, 
-                                                                           message, 
-                                                                           context, 
-                                                                           "Error", 
+        final IokeObject condition = IokeObject.as(IokeObject.getCellChain(this.condition,
+                                                                           message,
+                                                                           context,
+                                                                           "Error",
                                                                            "NativeException"), context).mimic(message, context);
         condition.setCell("message", message);
         condition.setCell("context", context);
@@ -831,13 +831,13 @@ public class Runtime {
                 symbolTable.put(name, obj);
             }
             return obj;
-        }            
+        }
     }
 
     public Object withRestartReturningArguments(RunnableWithControlFlow code, IokeObject context, Restart.JavaRestart... restarts) throws ControlFlow {
         List<RestartInfo> rrs = new ArrayList<RestartInfo>();
         BindIndex index = getBindIndex();
-        
+
         for(Restart.JavaRestart rjr : restarts) {
             IokeObject rr = IokeObject.as(((Message)IokeObject.data(mimic)).sendTo(mimic, context, restart), context);
             IokeObject.setCell(rr, "name", getSymbol(rjr.getName()), context);
@@ -849,7 +849,7 @@ public class Runtime {
 
             IokeObject.setCell(rr, "name", getSymbol(rjr.getName()), context);
             IokeObject.setCell(rr, "argumentNames", newList(args), context);
-            
+
             String report = rjr.report();
             if(report != null) {
                 IokeObject.setCell(rr, "report", evaluateString("fn(r, \"" + report + "\")", message, ground), context);
@@ -872,9 +872,9 @@ public class Runtime {
                 return result;
             } else {
                 throw e;
-            } 
+            }
         } finally {
-            unregisterRestarts(rrs); 
+            unregisterRestarts(rrs);
         }
     }
 
@@ -897,9 +897,9 @@ public class Runtime {
                 return;
             } else {
                 throw e;
-            } 
+            }
         } finally {
-            unregisterRestarts(rrs); 
+            unregisterRestarts(rrs);
         }
     }
 
@@ -922,7 +922,7 @@ public class Runtime {
             unregisterRescues(rescues);
         }
     }
-    
+
     public static class RescueInfo {
         public final IokeObject rescue;
         public final List<Object> applicableConditions;
@@ -1024,11 +1024,11 @@ public class Runtime {
             return new BindIndex(this.row, this.col+1);
         }
         public boolean lessThan(BindIndex other) {
-            return this.row < other.row || 
+            return this.row < other.row ||
                 (this.row == other.row && this.col < other.col);
         }
         public boolean greaterThan(BindIndex other) {
-            return this.row > other.row || 
+            return this.row > other.row ||
                 (this.row == other.row && this.col > other.col);
         }
 
@@ -1040,10 +1040,10 @@ public class Runtime {
     public BindIndex getBindIndex() {
         return new BindIndex(rescues.get().size());
     }
-    
+
     public List<HandlerInfo> findActiveHandlersFor(IokeObject condition, BindIndex stopIndex) {
         List<HandlerInfo> result = new ArrayList<HandlerInfo>();
-        
+
         for(List<HandlerInfo> lrp : handlers.get()) {
             for(HandlerInfo rp : lrp) {
                 if(rp.index.lessThan(stopIndex)) {
@@ -1125,12 +1125,17 @@ public class Runtime {
             throw new ControlFlow.Exit();
         }
     }
-    
+
+    /**
+     * Signals error condition Error Invocation NotActivatable with given report string.
+     * @return always nil
+     * @throws ControlFlow
+     */
     public Object errorNotActivatableCondition(IokeObject method, IokeObject context, IokeObject message, Object on, String report) throws ControlFlow {
-        IokeObject condition = IokeObject.as(IokeObject.getCellChain(this.condition, 
-          message, 
-          context, 
-          "Error", 
+        IokeObject condition = IokeObject.as(IokeObject.getCellChain(this.condition,
+          message,
+          context,
+          "Error",
           "Invocation",
           "NotActivatable"), context).mimic(message, context);
         condition.setCell("message", message);
@@ -1139,6 +1144,31 @@ public class Runtime {
         condition.setCell("method", method);
         condition.setCell("report", newText(report));
         errorCondition(condition);
+        return this.nil;
+    }
+
+    /**
+     * Signals restart condition Error NoSuchCell
+     * @return always nil
+     * @throws ControlFlow
+     */
+    public Object restartNoSuchCell(IokeObject context, IokeObject message, Object on, String name) throws ControlFlow {
+        final Runtime runtime = context.runtime;
+        final IokeObject condition = IokeObject.as(IokeObject.getCellChain(runtime.condition,
+                message,
+                context,
+                "Error",
+                "NoSuchCell"), context).mimic(message, context);
+        condition.setCell("message", message);
+        condition.setCell("context", context);
+        condition.setCell("receiver", on);
+        condition.setCell("cellName", runtime.getSymbol(name));
+
+        context.runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
+                public void run() throws ControlFlow {
+                    runtime.errorCondition(condition);
+                }
+            });
         return this.nil;
     }
 

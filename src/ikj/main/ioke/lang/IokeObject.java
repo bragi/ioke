@@ -373,20 +373,7 @@ public class IokeObject implements TypeChecker {
                         runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public String report() {
-                        return "Use value for: " + outerName;
-                    }
-
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                },
+                new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("storeValue") {
                     public String report() {
                         return "Store value for: " + outerName;
@@ -499,20 +486,7 @@ public class IokeObject implements TypeChecker {
                         runtime.errorCondition(condition);
                     }}, 
                 ctx,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public String report() {
-                        return "Use value for: " + outerName;
-                    }
-
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                },
+                new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("storeValue") {
                     public String report() {
                         return "Store value for: " + outerName;
@@ -570,20 +544,7 @@ public class IokeObject implements TypeChecker {
                         runtime.errorCondition(condition);
                     }}, 
                 ctx,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public String report() {
-                        return "Use value for: " + outerName;
-                    }
-
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                },
+                new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("storeValue") {
                     public String report() {
                         return "Store value for: " + outerName;
@@ -839,17 +800,7 @@ public class IokeObject implements TypeChecker {
                     context.runtime.errorCondition(condition);
                 }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        receiver[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-            );
+                new Restart.UseValueRestart(receiver));
         }
         return receiver[0];
     }

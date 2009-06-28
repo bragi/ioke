@@ -308,17 +308,7 @@ public class Decimal extends IokeData {
                                         context.runtime.errorCondition(condition);
                                     }}, 
                                 context,
-                                new Restart.ArgumentGivingRestart("useValue") { 
-                                    public List<String> getArgumentNames() {
-                                        return new ArrayList<String>(Arrays.asList("newValue"));
-                                    }
-                                    
-                                    public IokeObject invoke(IokeObject c2, List<Object> arguments) throws ControlFlow {
-                                        newCell[0] = arguments.get(0);
-                                        return c2.runtime.nil;
-                                    }
-                                }
-                                );
+                                new Restart.UseValueRestart(newCell));
                         
                             arg = newCell[0];
                         }

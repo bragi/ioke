@@ -4,6 +4,7 @@
 package ioke.lang;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ioke.lang.exceptions.ControlFlow;
@@ -32,7 +33,7 @@ public class Restart {
         }
 
         public abstract List<String> getArgumentNames();
-        
+
         public String report() {
             return null;
         }
@@ -47,6 +48,24 @@ public class Restart {
 
         public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
             return context.runtime.newList(arguments);
+        }
+    }
+
+    public static class UseValueRestart extends ArgumentGivingRestart {
+        Object[] cellReference;
+
+        public UseValueRestart(Object[] cellReference) {
+            super("useValue");
+            this.cellReference = cellReference;
+
+        }
+        public List<String> getArgumentNames() {
+            return new ArrayList<String>(Arrays.asList("newValue"));
+        }
+
+        public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
+            cellReference[0] = arguments.get(0);
+            return context.runtime.nil;
         }
     }
 

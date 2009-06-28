@@ -146,17 +146,7 @@ public abstract class IokeData {
                         context.runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-                                    
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-                );
+                new Restart.UseValueRestart(newCell));
 
             return IokeObject.convertTo(newCell[0], kind, signalCondition, conversionMethod, message, context);
         }
@@ -186,17 +176,7 @@ public abstract class IokeData {
                         context.runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-                                    
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-                );
+                new Restart.UseValueRestart(newCell));
 
             return IokeObject.convertTo(mimic, newCell[0], signalCondition, conversionMethod, message, context);
         }
@@ -223,17 +203,7 @@ public abstract class IokeData {
                         context.runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-                                    
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-                );
+                new Restart.UseValueRestart(newCell));
 
             return IokeObject.convertToRational(newCell[0], m, context, signalCondition);
         }
@@ -261,17 +231,7 @@ public abstract class IokeData {
                         context.runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-                );
+                new Restart.UseValueRestart(newCell));
 
             return IokeObject.convertToDecimal(newCell[0], m, context, signalCondition);
         }
@@ -297,17 +257,7 @@ public abstract class IokeData {
                     context.runtime.errorCondition(condition);
                 }}, 
             context,
-            new Restart.ArgumentGivingRestart("useValue") { 
-                public List<String> getArgumentNames() {
-                    return new ArrayList<String>(Arrays.asList("newValue"));
-                }
-
-                public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                    newCell[0] = arguments.get(0);
-                    return context.runtime.nil;
-                }
-            }
-            );
+            new Restart.UseValueRestart(newCell));
 
         return IokeObject.convertToNumber(newCell[0], m, context);
     }
@@ -334,17 +284,7 @@ public abstract class IokeData {
                         context.runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-                );
+                new Restart.UseValueRestart(newCell));
 
             return IokeObject.convertToText(newCell[0], m, context, signalCondition);
         }
@@ -370,17 +310,7 @@ public abstract class IokeData {
                         context.runtime.errorCondition(condition);
                     }}, 
                 context,
-                new Restart.ArgumentGivingRestart("useValue") { 
-                    public List<String> getArgumentNames() {
-                        return new ArrayList<String>(Arrays.asList("newValue"));
-                    }
-
-                    public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                        newCell[0] = arguments.get(0);
-                        return context.runtime.nil;
-                    }
-                }
-                );
+                new Restart.UseValueRestart(newCell));
 
             return IokeObject.convertToSymbol(newCell[0], m, context, signalCondition);
         }
@@ -405,17 +335,7 @@ public abstract class IokeData {
                     context.runtime.errorCondition(condition);
                 }}, 
             context,
-            new Restart.ArgumentGivingRestart("useValue") { 
-                public List<String> getArgumentNames() {
-                    return new ArrayList<String>(Arrays.asList("newValue"));
-                }
-
-                public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                    newCell[0] = arguments.get(0);
-                    return context.runtime.nil;
-                }
-            }
-            );
+            new Restart.UseValueRestart(newCell));
 
         return IokeObject.convertToRegexp(newCell[0], m, context);
     }

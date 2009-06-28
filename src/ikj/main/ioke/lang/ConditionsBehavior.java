@@ -318,17 +318,7 @@ public class ConditionsBehavior {
                                                 runtime.errorCondition(condition);
                                             }}, 
                                         context,
-                                        new Restart.ArgumentGivingRestart("useValue") { 
-                                            public List<String> getArgumentNames() {
-                                                return new ArrayList<String>(Arrays.asList("newValue"));
-                                            }
-                                    
-                                            public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                                                newCell[0] = arguments.get(0);
-                                                return runtime.nil;
-                                            }
-                                        }
-                                        );
+                                        new Restart.UseValueRestart(newCell));
                                     bindable = IokeObject.as(newCell[0], context);
                                     loop = true;
                                 }
@@ -482,17 +472,7 @@ public class ConditionsBehavior {
                                     runtime.errorCondition(condition);
                                 }}, 
                             context,
-                            new Restart.ArgumentGivingRestart("useValue") { 
-                                public List<String> getArgumentNames() {
-                                    return new ArrayList<String>(Arrays.asList("newValue"));
-                                }
-                                    
-                                public IokeObject invoke(IokeObject context, List<Object> arguments) throws ControlFlow {
-                                    newCell[0] = arguments.get(0);
-                                    return runtime.nil;
-                                }
-                            }
-                            );
+                            new Restart.UseValueRestart(newCell));
                         restart = IokeObject.as(newCell[0], context);
                     }
 

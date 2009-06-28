@@ -178,10 +178,16 @@ public class DefaultMacro extends IokeData implements Named, Inspectable, Associ
             }));
         c.setCell("currentMessage", message);
         c.setCell("surroundingContext", context);
-        c.setCell("call", call);
-        for(Map.Entry<String, Object> d : data.entrySet()) {
-            String s = d.getKey();
-            c.setCell(s.substring(0, s.length()-1), d.getValue());
+        if(call == null) {
+        	c.setCell("call", context.runtime.newCallFrom(c, message, context, IokeObject.as(on, context)));
+        } else {
+            c.setCell("call", call);
+        }
+        if(data != null) {
+            for(Map.Entry<String, Object> d : data.entrySet()) {
+                String s = d.getKey();
+                c.setCell(s.substring(0, s.length()-1), d.getValue());
+            }
         }
 
         try {
@@ -197,98 +203,16 @@ public class DefaultMacro extends IokeData implements Named, Inspectable, Associ
 
     @Override
     public Object activateWithCall(final IokeObject self, IokeObject context, IokeObject message, Object on, Object call) throws ControlFlow {
-        if(code == null) {
-        	return errorNotActivatableCondition(self, context, message, on);
-        }
-
-        IokeObject c = context.runtime.locals.mimic(message, context);
-        c.setCell("self", on);
-        c.setCell("@", on);
-        c.registerMethod(c.runtime.newNativeMethod("will return the currently executing macro receiver", new NativeMethod.WithNoArguments("@@") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return self;
-                }
-            }));
-        c.setCell("currentMessage", message);
-        c.setCell("surroundingContext", context);
-        c.setCell("call", call);
-
-        try {
-            return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
-        } catch(ControlFlow.Return e) {
-            if(e.context == c) {
-                return e.getValue();
-            } else {
-                throw e;
-            }
-        }
+    	return activateWithCallAndData(self, context, message, on, call, null);
     }
 
     @Override
     public Object activate(final IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-        if(code == null) {
-        	return errorNotActivatableCondition(self, context, message, on);
-        }
-
-        IokeObject c = context.runtime.locals.mimic(message, context);
-        c.setCell("self", on);
-        c.setCell("@", on);
-        c.registerMethod(c.runtime.newNativeMethod("will return the currently executing macro receiver", new NativeMethod.WithNoArguments("@@") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return self;
-                }
-            }));
-        c.setCell("currentMessage", message);
-        c.setCell("surroundingContext", context);
-        c.setCell("call", context.runtime.newCallFrom(c, message, context, IokeObject.as(on, context)));
-
-        try {
-            return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
-        } catch(ControlFlow.Return e) {
-            if(e.context == c) {
-                return e.getValue();
-            } else {
-                throw e;
-            }
-        }
+    	return activateWithCallAndData(self, context, message, on, null, null);
     }
 
     @Override
     public Object activateWithData(final IokeObject self, IokeObject context, IokeObject message, Object on, Map<String, Object> data) throws ControlFlow {
-        if(code == null) {
-        	return errorNotActivatableCondition(self, context, message, on);
-        }
-
-        IokeObject c = context.runtime.locals.mimic(message, context);
-        c.setCell("self", on);
-        c.setCell("@", on);
-        c.registerMethod(c.runtime.newNativeMethod("will return the currently executing macro receiver", new NativeMethod.WithNoArguments("@@") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return self;
-                }
-            }));
-        c.setCell("currentMessage", message);
-        c.setCell("surroundingContext", context);
-        c.setCell("call", context.runtime.newCallFrom(c, message, context, IokeObject.as(on, context)));
-        for(Map.Entry<String, Object> d : data.entrySet()) {
-            String s = d.getKey();
-            c.setCell(s.substring(0, s.length()-1), d.getValue());
-        }
-
-        try {
-            return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
-        } catch(ControlFlow.Return e) {
-            if(e.context == c) {
-                return e.getValue();
-            } else {
-                throw e;
-            }
-        }
+    	return activateWithCallAndData(self, context, message, on, null, data);
     }
 }// DefaultMacro

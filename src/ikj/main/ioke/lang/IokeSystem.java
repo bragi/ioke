@@ -130,10 +130,7 @@ public class IokeSystem extends IokeData {
 
                     final boolean[] continueLoadChain = new boolean[]{false};
 
-                    runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
+                    runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                         context,
                         new Restart.ArgumentGivingRestart("continueLoadChain") { 
                             public List<String> getArgumentNames() {
@@ -226,10 +223,7 @@ public class IokeSystem extends IokeData {
 
                 final boolean[] continueLoadChain = new boolean[]{false};
 
-                runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                        public void run() throws ControlFlow {
-                            runtime.errorCondition(condition);
-                        }}, 
+                runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                     context,
                     new Restart.ArgumentGivingRestart("continueLoadChain") { 
                         public List<String> getArgumentNames() {
@@ -330,10 +324,7 @@ public class IokeSystem extends IokeData {
 
                     final boolean[] continueLoadChain = new boolean[]{false};
 
-                    runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
+                    runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                         context,
                         new Restart.ArgumentGivingRestart("continueLoadChain") { 
                             public List<String> getArgumentNames() {
@@ -373,10 +364,7 @@ public class IokeSystem extends IokeData {
         condition.setCell("receiver", self);
         condition.setCell("moduleName", runtime.newText(name));
 
-        runtime.withReturningRestart("ignoreLoadError", context, new RunnableWithControlFlow() {
-                public void run() throws ControlFlow {
-                    runtime.errorCondition(condition);
-                }});
+        runtime.withReturningRestart("ignoreLoadError", context, new RunnableWithErrorCondition(condition));
         return false;
     }
     

@@ -485,10 +485,7 @@ public class IokeList extends IokeData {
 
                             final int[] newCell = new int[]{index};
 
-                            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                                    public void run() throws ControlFlow {
-                                        context.runtime.errorCondition(condition);
-                                    }}, 
+                            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                                 context,
                                 new Restart.ArgumentGivingRestart("useValue") { 
                                     public List<String> getArgumentNames() {
@@ -557,10 +554,7 @@ public class IokeList extends IokeData {
 
                         final int[] newCell = new int[]{index};
 
-                        context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    context.runtime.errorCondition(condition);
-                                }}, 
+                        context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                             context,
                             new Restart.ArgumentGivingRestart("useValue") { 
                                 public List<String> getArgumentNames() {

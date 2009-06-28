@@ -100,10 +100,7 @@ public class IokeIO extends IokeData {
 
                         condition.setCell("exceptionStackTrace", runtime.newList(ob));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
 
                     return context.runtime.getNil();
@@ -146,10 +143,7 @@ public class IokeIO extends IokeData {
 
                         condition.setCell("exceptionStackTrace", runtime.newList(ob));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
 
                     return context.runtime.getNil();
@@ -180,10 +174,7 @@ public class IokeIO extends IokeData {
 
                         condition.setCell("exceptionStackTrace", runtime.newList(ob));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
 
                     return context.runtime.getNil();

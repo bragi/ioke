@@ -193,10 +193,7 @@ public class IokeObject implements TypeChecker {
             condition.setCell("receiver", obj);
             condition.setCell("cellName", m.runtime.getSymbol(name));
 
-            m.runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        condition.runtime.errorCondition(condition);
-                    }});
+            m.runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
             
         }
         return result;
@@ -368,10 +365,7 @@ public class IokeObject implements TypeChecker {
 
             final Object[] newCell = new Object[]{cell};
 
-            runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        runtime.errorCondition(condition);
-                    }}, 
+            runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("storeValue") {
@@ -411,10 +405,7 @@ public class IokeObject implements TypeChecker {
             condition.setCell("receiver", this);
             condition.setCell("cellName", runtime.getSymbol(name));
 
-            runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        runtime.errorCondition(condition);
-                    }});
+            runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
         }
     }
 
@@ -481,10 +472,7 @@ public class IokeObject implements TypeChecker {
 
             final Object[] newCell = new Object[]{cell};
 
-            runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        runtime.errorCondition(condition);
-                    }}, 
+            runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 ctx,
                 new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("storeValue") {
@@ -539,10 +527,7 @@ public class IokeObject implements TypeChecker {
 
             final Object[] newCell = new Object[]{cell};
 
-            runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        runtime.errorCondition(condition);
-                    }}, 
+            runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 ctx,
                 new Restart.UseValueRestart(newCell),
                 new Restart.ArgumentGivingRestart("storeValue") {
@@ -795,10 +780,7 @@ public class IokeObject implements TypeChecker {
             condition.setCell("receiver", self);
             condition.setCell("expectedType", context.runtime.nil);
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                public void run() throws ControlFlow {
-                    context.runtime.errorCondition(condition);
-                }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(receiver));
         }

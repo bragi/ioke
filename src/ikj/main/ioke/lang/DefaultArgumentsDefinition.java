@@ -266,10 +266,7 @@ public class DefaultArgumentsDefinition {
                     condition.setCell("receiver", on);
                     condition.setCell("given", result);
                 
-                    List<Object> outp = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
+                    List<Object> outp = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                             context,
                             new Restart.DefaultValuesGivingRestart("ignoreArgument", runtime.nil, 0),
                             new Restart.DefaultValuesGivingRestart("takeArgumentAsIs", IokeObject.as(result, context), 1)
@@ -299,10 +296,7 @@ public class DefaultArgumentsDefinition {
                 condition.setCell("receiver", on);
                 condition.setCell("missing", runtime.newNumber(min-argCount));
                 
-                List<Object> newArguments = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                        public void run() throws ControlFlow {
-                            runtime.errorCondition(condition);
-                        }}, 
+                List<Object> newArguments = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                         context,
                         new Restart.ArgumentGivingRestart("provideExtraArguments") {
                             public List<String> getArgumentNames() {
@@ -518,10 +512,7 @@ public class DefaultArgumentsDefinition {
                     condition.setCell("argumentName", runtime.getSymbol(m.getName(null)));
                     condition.setCell("index", runtime.newNumber(index));
                 
-                    List<Object> newValue = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
+                    List<Object> newValue = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                         context,
                         // Maybe also provide an unevaluated message...
                             new Restart.ArgumentGivingRestart("provideDefaultValue") {

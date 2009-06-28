@@ -141,10 +141,7 @@ public abstract class IokeData {
 
             final Object[] newCell = new Object[]{self};
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        context.runtime.errorCondition(condition);
-                    }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell));
 
@@ -171,10 +168,7 @@ public abstract class IokeData {
 
             final Object[] newCell = new Object[]{self};
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        context.runtime.errorCondition(condition);
-                    }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell));
 
@@ -198,10 +192,7 @@ public abstract class IokeData {
 
             final Object[] newCell = new Object[]{self};
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        context.runtime.errorCondition(condition);
-                    }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell));
 
@@ -226,10 +217,7 @@ public abstract class IokeData {
 
             final Object[] newCell = new Object[]{self};
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        context.runtime.errorCondition(condition);
-                    }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell));
 
@@ -252,10 +240,7 @@ public abstract class IokeData {
 
         final Object[] newCell = new Object[]{self};
 
-        context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                public void run() throws ControlFlow {
-                    context.runtime.errorCondition(condition);
-                }}, 
+        context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
             context,
             new Restart.UseValueRestart(newCell));
 
@@ -279,10 +264,7 @@ public abstract class IokeData {
 
             final Object[] newCell = new Object[]{self};
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        context.runtime.errorCondition(condition);
-                    }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell));
 
@@ -305,10 +287,7 @@ public abstract class IokeData {
 
             final Object[] newCell = new Object[]{self};
 
-            context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                    public void run() throws ControlFlow {
-                        context.runtime.errorCondition(condition);
-                    }}, 
+            context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                 context,
                 new Restart.UseValueRestart(newCell));
 
@@ -330,10 +309,7 @@ public abstract class IokeData {
 
         final Object[] newCell = new Object[]{self};
 
-        context.runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                public void run() throws ControlFlow {
-                    context.runtime.errorCondition(condition);
-                }}, 
+        context.runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
             context,
             new Restart.UseValueRestart(newCell));
 

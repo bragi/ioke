@@ -269,10 +269,7 @@ public class JavaArgumentsDefinition {
                     condition.setCell("receiver", on);
                     condition.setCell("given", result);
                 
-                    List<Object> outp = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithControlFlow() {
-                            public void run() throws ControlFlow {
-                                runtime.errorCondition(condition);
-                            }}, 
+                    List<Object> outp = IokeList.getList(runtime.withRestartReturningArguments(new RunnableWithErrorCondition(condition), 
                             context,
                             new Restart.DefaultValuesGivingRestart("ignoreArgument", runtime.nil, 0),
                             new Restart.DefaultValuesGivingRestart("takeArgumentAsIs", IokeObject.as(result, context), 1)

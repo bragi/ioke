@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ioke.lang.DefaultArgumentsDefinition;
+import ioke.lang.RunnableWithErrorCondition;
 import ioke.lang.Runtime;
 import ioke.lang.RunnableWithControlFlow;
 import ioke.lang.IokeObject;
@@ -118,10 +119,7 @@ public abstract class Readline {
 
                         condition.setCell("exceptionStackTrace", runtime.newList(ob));
 
-                        runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                                public void run() throws ControlFlow {
-                                    runtime.errorCondition(condition);
-                                }});
+                        runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
                     }
                     return line;
                 }

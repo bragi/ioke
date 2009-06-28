@@ -1164,11 +1164,7 @@ public class Runtime {
         condition.setCell("receiver", on);
         condition.setCell("cellName", runtime.getSymbol(name));
 
-        context.runtime.withReturningRestart("ignore", context, new RunnableWithControlFlow() {
-                public void run() throws ControlFlow {
-                    runtime.errorCondition(condition);
-                }
-            });
+        context.runtime.withReturningRestart("ignore", context, new RunnableWithErrorCondition(condition));
         return this.nil;
     }
 

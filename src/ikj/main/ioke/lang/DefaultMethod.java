@@ -126,46 +126,7 @@ public class DefaultMethod extends Method implements AssociatedCode {
 
     @Override
     public Object activateWithCall(final IokeObject self, IokeObject context, IokeObject message, Object on, Object call) throws ControlFlow {
-        if(code == null) {
-        	return errorNotActivatableCondition(self, context, message, on);
-        }
-
-
-        IokeObject c = context.runtime.locals.mimic(message, context);
-        c.setCell("self", on);
-        c.setCell("@", on);
-
-        c.registerMethod(c.runtime.newNativeMethod("will return the currently executing method receiver", new NativeMethod.WithNoArguments("@@") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return self;
-                }
-            }));
-
-        c.setCell("currentMessage", message);
-        c.setCell("surroundingContext", context);
-
-        Object superCell = IokeObject.findSuperCellOn(on, self, message, context, name);
-        if(superCell == context.runtime.nul) {
-            superCell = IokeObject.findSuperCellOn(on, self, message, context, Message.name(message));
-        }
-
-        if(superCell != context.runtime.nul) {
-            c.setCell("super", createSuperCallFor(self, context, message, on, superCell));
-        }
-
-        arguments.assignArgumentValues(c, context, message, on, ((Call)IokeObject.data(call)));
-
-        try {
-            return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
-        } catch(ControlFlow.Return e) {
-            if(e.context == c) {
-                return e.getValue();
-            } else {
-                throw e;
-            }
-        }
+    	return activateWithCallAndData(self, context, message, on, call, null);
     }
 
     @Override
@@ -189,9 +150,11 @@ public class DefaultMethod extends Method implements AssociatedCode {
 
         c.setCell("currentMessage", message);
         c.setCell("surroundingContext", context);
-        for(Map.Entry<String, Object> d : data.entrySet()) {
-            String s = d.getKey();
-            c.setCell(s.substring(0, s.length()-1), d.getValue());
+        if(data != null) {
+            for(Map.Entry<String, Object> d : data.entrySet()) {
+                String s = d.getKey();
+                c.setCell(s.substring(0, s.length()-1), d.getValue());
+            }
         }
 
         Object superCell = IokeObject.findSuperCellOn(on, self, message, context, name);
@@ -203,7 +166,11 @@ public class DefaultMethod extends Method implements AssociatedCode {
             c.setCell("super", createSuperCallFor(self, context, message, on, superCell));
         }
 
-        arguments.assignArgumentValues(c, context, message, on, ((Call)IokeObject.data(call)));
+        if(call == null) {
+            arguments.assignArgumentValues(c, context, message, on);
+        } else {
+            arguments.assignArgumentValues(c, context, message, on, ((Call)IokeObject.data(call)));
+        }
 
         try {
             return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
@@ -218,93 +185,11 @@ public class DefaultMethod extends Method implements AssociatedCode {
 
     @Override
     public Object activate(final IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-        if(code == null) {
-        	return errorNotActivatableCondition(self, context, message, on);
-        }
-
-
-        IokeObject c = context.runtime.locals.mimic(message, context);
-        c.setCell("self", on);
-        c.setCell("@", on);
-
-        c.registerMethod(c.runtime.newNativeMethod("will return the currently executing method receiver", new NativeMethod.WithNoArguments("@@") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return self;
-                }
-            }));
-
-        c.setCell("currentMessage", message);
-        c.setCell("surroundingContext", context);
-
-        Object superCell = IokeObject.findSuperCellOn(on, self, message, context, name);
-        if(superCell == context.runtime.nul) {
-            superCell = IokeObject.findSuperCellOn(on, self, message, context, Message.name(message));
-        }
-
-        if(superCell != context.runtime.nul) {
-            c.setCell("super", createSuperCallFor(self, context, message, on, superCell));
-        }
-
-        arguments.assignArgumentValues(c, context, message, on);
-
-        try {
-            return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
-        } catch(ControlFlow.Return e) {
-            if(e.context == c) {
-                return e.getValue();
-            } else {
-                throw e;
-            }
-        }
+    	return activateWithCallAndData(self, context, message, on, null, null);
     }
 
     @Override
     public Object activateWithData(final IokeObject self, IokeObject context, IokeObject message, Object on, Map<String, Object> data) throws ControlFlow {
-        if(code == null) {
-        	return errorNotActivatableCondition(self, context, message, on);
-        }
-
-
-        IokeObject c = context.runtime.locals.mimic(message, context);
-        c.setCell("self", on);
-        c.setCell("@", on);
-
-        c.registerMethod(c.runtime.newNativeMethod("will return the currently executing method receiver", new NativeMethod.WithNoArguments("@@") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return self;
-                }
-            }));
-
-        c.setCell("currentMessage", message);
-        c.setCell("surroundingContext", context);
-        for(Map.Entry<String, Object> d : data.entrySet()) {
-            String s = d.getKey();
-            c.setCell(s.substring(0, s.length()-1), d.getValue());
-        }
-
-        Object superCell = IokeObject.findSuperCellOn(on, self, message, context, name);
-        if(superCell == context.runtime.nul) {
-            superCell = IokeObject.findSuperCellOn(on, self, message, context, Message.name(message));
-        }
-
-        if(superCell != context.runtime.nul) {
-            c.setCell("super", createSuperCallFor(self, context, message, on, superCell));
-        }
-
-        arguments.assignArgumentValues(c, context, message, on);
-
-        try {
-            return ((Message)IokeObject.data(code)).evaluateCompleteWith(code, c, on);
-        } catch(ControlFlow.Return e) {
-            if(e.context == c) {
-                return e.getValue();
-            } else {
-                throw e;
-            }
-        }
+    	return activateWithCallAndData(self, context, message, on, null, data);
     }
 }// DefaultMethod

@@ -126,4 +126,8 @@ public class Method extends IokeData implements Named, Inspectable {
             return name + ":method(...)";
         }
     }
+    
+    public String getDefaultDocumentation() {
+      return null;
+    }
 }// Method

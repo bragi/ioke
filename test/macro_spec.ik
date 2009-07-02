@@ -113,14 +113,14 @@ describe("DefaultMacro",
   )
 
   describe("inspect",
-    it("should validate type of receiver",
-      cell("DefaultMacro") should checkReceiverTypeOn(:inspect)
+    it("should be Text",
+      cell("DefaultMacro") inspect kind should == "Text"
     )
   )
 
   describe("notice",
-    it("should validate type of receiver",
-      cell("DefaultMacro") should checkReceiverTypeOn(:notice)
+    it("should be Text",
+      cell("DefaultMacro") notice kind should == "Text"
     )
   )
 

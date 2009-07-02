@@ -104,12 +104,7 @@ public class DefaultSyntax extends IokeData implements Named, Inspectable, Assoc
                 }
             }));
 
-        syntax.registerMethod(syntax.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", syntax) {
-                @Override
-                public Object activate(IokeObject self, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return context.runtime.newText(DefaultSyntax.getInspect(on));
-                }
-            }));
+        syntax.registerMethod(syntax.runtime.newNativeMethod(new CommonMethods.Inspect()));
         
         syntax.registerMethod(syntax.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", syntax) {
                 @Override
@@ -150,11 +145,11 @@ public class DefaultSyntax extends IokeData implements Named, Inspectable, Assoc
         this.name = name;
     }
 
-    public static String getInspect(Object on) {
+    public static String getInspect(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).inspect(on);
     }
 
-    public static String getNotice(Object on) {
+    public static String getNotice(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).notice(on);
     }
 

@@ -243,4 +243,12 @@ public class JavaWrapper extends IokeData {
                 }
             }));
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "JavaWrapper";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "JavaWrapper";
+	}
 }

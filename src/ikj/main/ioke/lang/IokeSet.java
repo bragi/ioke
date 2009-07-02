@@ -15,7 +15,7 @@ import ioke.lang.util.IdentitySet;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class IokeSet extends IokeData {
+public class IokeSet extends IokeData implements Inspectable {
     private Set<Object> set;
 
     public IokeSet() {
@@ -33,12 +33,7 @@ public class IokeSet extends IokeData {
         obj.setKind("Set");
         obj.mimics(IokeObject.as(runtime.mixins.getCell(null, null, "Enumerable"), null), runtime.nul, runtime.nul);
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", runtime.set) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(IokeSet.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
         obj.registerMethod(obj.runtime.newNativeMethod("Converts this set to use identity semantics, and then returns it.", new TypeCheckingNativeMethod.WithNoArguments("withIdentitySemantics!", runtime.set) {
                 @Override

@@ -379,4 +379,12 @@ public class RegexpMatch extends IokeData {
             }));
         
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "RegexpMatch";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "RegexpMatch";
+	}
 }

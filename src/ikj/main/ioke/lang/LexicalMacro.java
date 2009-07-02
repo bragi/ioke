@@ -93,14 +93,7 @@ public class LexicalMacro extends IokeData implements AssociatedCode, Named, Ins
                     return dynamicContext.runtime.newText(((AssociatedCode)IokeObject.data(on)).getArgumentsCode());
                 }
             }));
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new NativeMethod.WithNoArguments("inspect") {
-                @Override
-                public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-
-                    return context.runtime.newText(LexicalMacro.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
         obj.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
                 @Override
                 public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
@@ -144,11 +137,11 @@ public class LexicalMacro extends IokeData implements AssociatedCode, Named, Ins
         this.name = name;
     }
 
-    public static String getInspect(Object on) {
+    public static String getInspect(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).inspect(on);
     }
 
-    public static String getNotice(Object on) {
+    public static String getNotice(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).notice(on);
     }
 

@@ -17,7 +17,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class IokeList extends IokeData {
+public class IokeList extends IokeData implements Inspectable {
     private List<Object> list;
 
     public IokeList() {
@@ -43,12 +43,7 @@ public class IokeList extends IokeData {
         obj.setKind("List");
         obj.mimics(IokeObject.as(runtime.mixins.getCell(null, null, "Enumerable"), null), runtime.nul, runtime.nul);
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", runtime.list) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                  return method.runtime.newText(IokeList.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
         obj.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.list) {
                 @Override

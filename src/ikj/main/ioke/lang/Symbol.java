@@ -145,4 +145,12 @@ public class Symbol extends IokeData {
             return ":" + text;
         }
     }
+
+	public String notice(Object obj) throws ControlFlow {
+        if(!onlyGoodChars(obj)) {
+            return ":\"" + text + "\"";
+        } else {
+            return ":" + text;
+        }
+	}
 }// Symbol

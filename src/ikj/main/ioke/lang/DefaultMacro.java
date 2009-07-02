@@ -84,12 +84,7 @@ public class DefaultMacro extends IokeData implements Named, Inspectable, Associ
                 }
             }));
         
-        macro.registerMethod(macro.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", macro) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return context.runtime.newText(DefaultMacro.getInspect(on));
-                }
-            }));
+        macro.registerMethod(macro.runtime.newNativeMethod(new CommonMethods.Inspect()));
         
         macro.registerMethod(macro.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", macro) {
                 @Override
@@ -131,11 +126,11 @@ public class DefaultMacro extends IokeData implements Named, Inspectable, Associ
         this.name = name;
     }
 
-    public static String getInspect(Object on) {
+    public static String getInspect(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).inspect(on);
     }
 
-    public static String getNotice(Object on) {
+    public static String getNotice(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).notice(on);
     }
 

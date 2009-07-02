@@ -22,7 +22,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class Number extends IokeData {
+public class Number extends IokeData implements Inspectable {
     private final RatNum value;
     private final boolean kind;
 
@@ -617,12 +617,7 @@ public class Number extends IokeData {
                 }
             }));
 
-        rational.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", number) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Number.getInspect(on));
-                }
-            }));
+        rational.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
         rational.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", number) {
                 @Override
@@ -702,4 +697,9 @@ public class Number extends IokeData {
                 }
             }));            
     }
+
+	public String notice(Object self) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }// Number

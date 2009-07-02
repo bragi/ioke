@@ -542,17 +542,14 @@ describe(Number,
     )
 
     describe("inspect",
-      it("should validate type of receiver",
-        Number Rational should checkReceiverTypeOn(:"inspect")
-        x = Origin mimic
-        x cell("inspect") = Number Rational cell("inspect")
-        fn(x inspect) should signal(Condition Error Type IncorrectType)
+      it("should be Text",
+        Number Rational inspect kind should == "Text"
       )
     )
 
     describe("notice",
-      it("should validate type of receiver",
-        Number Rational should checkReceiverTypeOn(:"notice")
+      it("should be Text",
+        Number Rational notice kind should == "Text"
       )
     )
   )
@@ -1207,14 +1204,14 @@ describe(Number,
     )
 
     describe("inspect",
-      it("should validate type of receiver",
-        Number Integer should checkReceiverTypeOn(:inspect)
+      it("should be Text",
+        Number Integer inspect kind should == "Text"
       )
     )
 
     describe("notice",
-      it("should validate type of receiver",
-        Number Integer should checkReceiverTypeOn(:notice)
+      it("should be Text",
+        Number Rational notice kind should == "Text"
       )
     )
   )
@@ -1243,17 +1240,14 @@ describe(Number,
     )
     
     describe("inspect",
-      it("should validate type of receiver",
-        Number Infinity should checkReceiverTypeOn(:"inspect")
-        x = Origin mimic
-        x cell("inspect") = Number Infinity cell("inspect")
-        fn(x inspect) should signal(Condition Error Type IncorrectType)
+      it("should be Text",
+        Number Infinity inspect kind should == "Text"
       )
     )
 
     describe("notice",
-      it("should validate type of receiver",
-        Number Infinity should checkReceiverTypeOn(:"notice")
+      it("should be Text",
+        Number Infinity inspect kind should == "Text"
       )
     )
     

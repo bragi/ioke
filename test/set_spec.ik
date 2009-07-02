@@ -263,14 +263,14 @@ describe("Set",
   )
 
   describe("inspect",
-    it("should validate type of receiver",
-      Set should checkReceiverTypeOn(:inspect)
+    it("should be Text",
+      Set inspect kind should == "Text"
     )
   )
 
   describe("notice",
-    it("should validate type of receiver",
-      Set should checkReceiverTypeOn(:notice)
+    it("should be Text",
+      Set notice kind should == "Text"
     )
   )
 

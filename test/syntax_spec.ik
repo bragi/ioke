@@ -154,14 +154,14 @@ describe("DefaultSyntax",
   )
 
   describe("inspect",
-    it("should validate type of receiver",
-      syntax should checkReceiverTypeOn(:inspect)
+    it("should be Text",
+      syntax inspect kind should == "Text"
     )
   )
 
   describe("notice",
-    it("should validate type of receiver",
-      syntax should checkReceiverTypeOn(:notice)
+    it("should be Text",
+      syntax notice kind should == "Text"
     )
   )
 

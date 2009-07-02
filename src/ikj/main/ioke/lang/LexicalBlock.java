@@ -14,7 +14,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class LexicalBlock extends IokeData implements AssociatedCode {
+public class LexicalBlock extends IokeData implements AssociatedCode, Inspectable {
     private DefaultArgumentsDefinition arguments;
     private IokeObject context;
     private IokeObject message;
@@ -144,13 +144,7 @@ public class LexicalBlock extends IokeData implements AssociatedCode {
                     return ((AssociatedCode)IokeObject.data(on)).getCode();
                 }
             }));
-        lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod("Returns a text inspection of the object", new NativeMethod.WithNoArguments("inspect") {
-                @Override
-                public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return context.runtime.newText(LexicalBlock.getInspect(on));
-                }
-            }));
+        lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod(new CommonMethods.Inspect()));
         lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
                 @Override
                 public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
@@ -212,11 +206,11 @@ public class LexicalBlock extends IokeData implements AssociatedCode {
         return ((Message)IokeObject.data(this.message)).evaluateCompleteWith(this.message, c, on);
     }
 
-    public static String getInspect(Object on) {
+    public static String getInspect(Object on) throws ControlFlow {
         return ((LexicalBlock)(IokeObject.data(on))).inspect(on);
     }
 
-    public static String getNotice(Object on) {
+    public static String getNotice(Object on) throws ControlFlow {
         return ((LexicalBlock)(IokeObject.data(on))).notice(on);
     }
 

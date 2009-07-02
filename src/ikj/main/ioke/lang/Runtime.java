@@ -721,6 +721,10 @@ public class Runtime {
         return obj;
     }
 
+    public IokeObject newNativeMethod(NativeMethod impl) throws ControlFlow {
+        return newMethod(impl.getDefaultDocumentation(), this.nativeMethod, impl);
+    }
+
     public IokeObject newNativeMethod(String doc, NativeMethod impl) throws ControlFlow {
         return newMethod(doc, this.nativeMethod, impl);
     }

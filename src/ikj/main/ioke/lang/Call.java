@@ -196,4 +196,12 @@ public class Call extends IokeData {
     public IokeData cloneData(IokeObject obj, IokeObject m, IokeObject context) {
         return new Call(this.ctx, this.message, this.surroundingContext, this.on);
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "call";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "call";
+	}
 }// Call

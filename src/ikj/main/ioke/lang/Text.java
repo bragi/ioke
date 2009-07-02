@@ -752,4 +752,8 @@ public class Text extends IokeData {
         // This should obviously have more stuff later for escaping and so on.
         return "\"" + new StringUtils().escape(text) + "\"";
     }
+
+	public String notice(Object self) throws ControlFlow {
+        return "\"" + new StringUtils().escape(text) + "\"";
+	}
 }// Text

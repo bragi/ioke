@@ -17,14 +17,14 @@ describe(DateTime,
   )
 
   describe("inspect",
-    it("should validate type of receiver",
-      DateTime should checkReceiverTypeOn(:inspect)
+    it("should exist",
+      DateTime inspect kind should == "Text"
     )
   )
 
   describe("notice",
-    it("should validate type of receiver",
-      DateTime should checkReceiverTypeOn(:notice)
+    it("should exist",
+      DateTime notice kind should == "Text"
     )
   )
 )

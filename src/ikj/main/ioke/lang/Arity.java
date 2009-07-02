@@ -180,5 +180,13 @@ public class Arity extends IokeData {
             }));
 
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "arity";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "arity";
+	}
     
 }

@@ -1639,4 +1639,12 @@ public class Message extends IokeData {
     public String toString(IokeObject self) {
         return code();
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "method";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "method";
+	}
 }// Message

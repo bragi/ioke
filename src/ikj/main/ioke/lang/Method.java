@@ -37,14 +37,7 @@ public class Method extends IokeData implements Named, Inspectable {
                     return context.runtime.newText(((Method)IokeObject.data(on)).name);
                 }
             }));
-        method.registerMethod(method.runtime.newNativeMethod("Returns a text inspection of the object", new NativeMethod.WithNoArguments("inspect") {
-                @Override
-                public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-
-                    return context.runtime.newText(Method.getInspect(on));
-                }
-            }));
+        method.registerMethod(method.runtime.newNativeMethod(new CommonMethods.Inspect()));
         method.registerMethod(method.runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
                 @Override
                 public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
@@ -107,11 +100,11 @@ public class Method extends IokeData implements Named, Inspectable {
         return errorNotActivatableCondition(method, context, message, on);
     }
 
-    public static String getInspect(Object on) {
+    public static String getInspect(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).inspect(on);
     }
 
-    public static String getNotice(Object on) {
+    public static String getNotice(Object on) throws ControlFlow {
         return ((Inspectable)(IokeObject.data(on))).notice(on);
     }
 

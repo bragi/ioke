@@ -185,4 +185,12 @@ public class IokeIO extends IokeData {
     public IokeData cloneData(IokeObject obj, IokeObject m, IokeObject context) {
         return new IokeIO(reader, writer);
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "io";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "io";
+	}
 }// IokeIO

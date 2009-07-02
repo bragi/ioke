@@ -28,11 +28,11 @@ public class AliasMethod extends IokeData implements Named, Inspectable, Associa
         this.name = name;
     }
 
-    public String inspect(Object self) {
+    public String inspect(Object self) throws ControlFlow {
         return ((Inspectable)realMethod).inspect(realSelf);
     }
 
-    public String notice(Object self) {
+    public String notice(Object self) throws ControlFlow {
         return ((Inspectable)realMethod).notice(realSelf);
     }
 

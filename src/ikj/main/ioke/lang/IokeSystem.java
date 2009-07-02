@@ -562,4 +562,12 @@ public class IokeSystem extends IokeData {
     public String toString() {
         return "System";
     }
+
+	public String inspect(Object self) throws ControlFlow {
+		return "System";
+	}
+
+	public String notice(Object self) throws ControlFlow {
+		return "System";
+	}
 }// IokeSystem

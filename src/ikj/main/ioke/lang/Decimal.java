@@ -23,7 +23,7 @@ import gnu.math.RatNum;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class Decimal extends IokeData {
+public class Decimal extends IokeData implements Inspectable {
     private final static DecimalFormatSymbols SYMBOLS = new DecimalFormatSymbols(Locale.US);
     private final BigDecimal value;
 
@@ -72,13 +72,17 @@ public class Decimal extends IokeData {
         return self;
     }
 
-    public static String getInspect(Object on) {
+    public static String getInspect(Object on) throws ControlFlow {
         return ((Decimal)(IokeObject.data(on))).inspect(on);
     }
 
-    public String inspect(Object obj) {
+    public String inspect(Object obj)  throws ControlFlow {
         return asJavaString();
     }
+
+	public String notice(Object self) throws ControlFlow {
+		return asJavaString();
+	}
 
     @Override
     public void init(IokeObject obj) throws ControlFlow {
@@ -95,12 +99,7 @@ public class Decimal extends IokeData {
                 }
             }));
 
-        decimal.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", decimal) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Decimal.getInspect(on));
-                }
-            }));
+        decimal.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
         decimal.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", decimal) {
                 @Override
@@ -334,5 +333,4 @@ public class Decimal extends IokeData {
     public int hashCode(IokeObject self) {
         return this.value.hashCode();
     }
-
 }// Decimal

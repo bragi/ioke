@@ -14,8 +14,16 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public abstract class IokeData {
-    public final static IokeData None = new IokeData(){};
+public abstract class IokeData implements Inspectable {
+    public final static IokeData None = new IokeData(){
+
+		public String inspect(Object self) throws ControlFlow {
+			return "None";
+		}
+
+		public String notice(Object self) throws ControlFlow {
+			return "None";
+		}};
 
     public final static IokeData Nil = new IokeData(){
             public void init(IokeObject obj) {
@@ -47,6 +55,14 @@ public abstract class IokeData {
             public String toString(IokeObject self) {
                 return "nil";
             }
+
+			public String inspect(Object self) throws ControlFlow {
+                return "nil";
+			}
+
+			public String notice(Object self) throws ControlFlow {
+                return "nil";
+			}
         };
 
     public final static IokeData False = new IokeData(){
@@ -75,6 +91,14 @@ public abstract class IokeData {
             public String toString(IokeObject self) {
                 return "false";
             }
+
+			public String inspect(Object self) throws ControlFlow {
+                return "false";
+			}
+
+			public String notice(Object self) throws ControlFlow {
+                return "false";
+			}
         };
 
     public final static IokeData True = new IokeData(){
@@ -99,6 +123,14 @@ public abstract class IokeData {
             public String toString(IokeObject self) {
                 return "true";
             }
+
+			public String inspect(Object self) throws ControlFlow {
+                return "true";
+			}
+
+			public String notice(Object self) throws ControlFlow {
+                return "true";
+			}
         };
 
 

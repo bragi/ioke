@@ -14,7 +14,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class Dict extends IokeData {
+public class Dict extends IokeData implements Inspectable {
     private Map<Object, Object> dict;
     private IokeObject defaultValue;
 
@@ -181,12 +181,7 @@ public class Dict extends IokeData {
             }));
 
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", runtime.dict) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Dict.getInspect(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Inspect()));
 
         obj.registerMethod(runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.dict) {
                 @Override

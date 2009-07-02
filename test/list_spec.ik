@@ -18,14 +18,14 @@ describe(List,
   )
   
   describe("inspect",
-    it("should validate type of receiver",
-      List should checkReceiverTypeOn(:inspect)
+    it("should be Text",
+      List inspect kind should == "Text"
     )
   )
   
   describe("notice",
-    it("should validate type of receiver",
-      List should checkReceiverTypeOn(:notice)
+    it("should be Text",
+      List notice kind should == "Text"
     )
   )
   

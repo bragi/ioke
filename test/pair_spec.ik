@@ -75,8 +75,8 @@ describe(Pair,
       (1 => 2) inspect should == "1 => 2"
     )
 
-    it("should validate type of receiver",
-      Pair should checkReceiverTypeOn(:inspect)
+    it("should return Text",
+      Pair inspect kind should == "Text"
     )
   )
 
@@ -89,8 +89,8 @@ describe(Pair,
       (1 => 2) notice should == "1 => 2"
     )
 
-    it("should validate type of receiver",
-      Pair should checkReceiverTypeOn(:notice)
+    it("should return Text",
+      Pair notice kind should == "Text"
     )
   )
 )

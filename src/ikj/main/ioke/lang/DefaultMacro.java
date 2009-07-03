@@ -14,7 +14,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class DefaultMacro extends IokeData implements Named, Inspectable, AssociatedCode {
+public class DefaultMacro extends IokeData implements Named, AssociatedCode {
     String name;
     private IokeObject code;
 
@@ -86,12 +86,7 @@ public class DefaultMacro extends IokeData implements Named, Inspectable, Associ
         
         macro.registerMethod(macro.runtime.newNativeMethod(new CommonMethods.Inspect()));
         
-        macro.registerMethod(macro.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", macro) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return context.runtime.newText(DefaultMacro.getNotice(on));
-                }
-            }));
+        macro.registerMethod(macro.runtime.newNativeMethod(new CommonMethods.Notice()));
         
         macro.registerMethod(macro.runtime.newNativeMethod("returns the full code of this macro, as a Text", new TypeCheckingNativeMethod.WithNoArguments("code", macro) {
                 @Override
@@ -124,14 +119,6 @@ public class DefaultMacro extends IokeData implements Named, Inspectable, Associ
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((Inspectable)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((Inspectable)(IokeObject.data(on))).notice(on);
     }
 
     public String inspect(Object self) {

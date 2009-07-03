@@ -60,21 +60,9 @@ public class Text extends IokeData {
                 }
             }));
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new NativeMethod.WithNoArguments("inspect") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return method.runtime.newText(Text.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return method.runtime.newText(Text.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Notice()));
 
         obj.registerMethod(obj.runtime.newNativeMethod("Returns a lower case version of this text", new TypeCheckingNativeMethod.WithNoArguments("lower", runtime.text) {
                 @Override
@@ -398,10 +386,6 @@ public class Text extends IokeData {
         return ((Text)(IokeObject.data(on))).getText();
     }
 
-    public static String getInspect(Object on) {
-        return ((Text)(IokeObject.data(on))).inspect(on);
-    }
-
     public static boolean isText(Object on) {
         return IokeObject.data(on) instanceof Text;
     }
@@ -506,6 +490,7 @@ public class Text extends IokeData {
                             if(txt == null) {
                                 txt = ((Message)IokeObject.data(context.runtime.asText)).sendTo(context.runtime.asText, context, arg);
                             }
+                            
                             String outTxt = Text.getText(txt);
 
                             if(outTxt.length() < justify) {

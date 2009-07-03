@@ -97,5 +97,10 @@ public abstract class NativeMethod extends Method {
     public String inspect(Object self) {
         return "method(" + getDominantClassName() + ((name != null) ? ("_" + name) : "") + ")";
     }
+
+    @Override
+    public String notice(Object self) {
+        return "method(" + getDominantClassName() + ((name != null) ? ("_" + name) : "") + ")";
+    }
 }
 

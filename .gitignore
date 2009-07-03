@@ -24,6 +24,7 @@ spike
 version_data.properties
 .classpath
 .project
+.pmd
 /dok
 /rels
 /lib/dist

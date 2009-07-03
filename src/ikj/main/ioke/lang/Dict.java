@@ -183,12 +183,7 @@ public class Dict extends IokeData implements Inspectable {
 
         obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.dict) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Dict.getNotice(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Notice()));
 
         obj.registerMethod(runtime.newNativeMethod("Returns all the keys of this dict", new TypeCheckingNativeMethod.WithNoArguments("keys", runtime.dict) {
                 @Override
@@ -296,14 +291,6 @@ public class Dict extends IokeData implements Inspectable {
         return dict.toString();
     }
 
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((Dict)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((Dict)(IokeObject.data(on))).notice(on);
-    }
-
     public String inspect(Object obj) throws ControlFlow {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -312,14 +299,16 @@ public class Dict extends IokeData implements Inspectable {
         for(Map.Entry<Object, Object> o : dict.entrySet()) {
             sb.append(sep);
             Object key = o.getKey();
+            Object value = o.getValue();
 
             if((IokeObject.data(key) instanceof Symbol) && Symbol.onlyGoodChars(key)) {
                 sb.append(Symbol.getText(key)).append(": ");
             } else {
                 sb.append(IokeObject.inspect(key)).append(" => ");
             }
+            
+            sb.append(IokeObject.inspect(value));
 
-            sb.append(IokeObject.inspect(o.getValue()));
             sep = ", ";
         }
 

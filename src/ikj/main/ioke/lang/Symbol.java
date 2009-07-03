@@ -34,19 +34,9 @@ public class Symbol extends IokeData {
                 }
             }));
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", obj.runtime.symbol) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Symbol.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", obj.runtime.symbol) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Symbol.getInspect(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Notice()));
 
         obj.registerMethod(obj.runtime.newNativeMethod("compares this symbol against the argument, returning -1, 0 or 1 based on which one is lexically larger", new TypeCheckingNativeMethod("<=>") {
                 private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
@@ -93,10 +83,6 @@ public class Symbol extends IokeData {
         return ((Symbol)(IokeObject.data(on))).getText();
     }
 
-    public static String getInspect(Object on) {
-        return ((Symbol)(IokeObject.data(on))).inspect(on);
-    }
-
     public String getText() {
         return text;
     }
@@ -137,9 +123,13 @@ public class Symbol extends IokeData {
         String text = Symbol.getText(sym);
         return !(text.length() == 0 || BAD_CHARS.matcher(text).find());
     }
+    
+    public boolean onlyGoodChars() {
+        return !(text.length() == 0 || BAD_CHARS.matcher(text).find());
+    }
 
     public String inspect(Object obj) {
-        if(!onlyGoodChars(obj)) {
+        if(!onlyGoodChars()) {
             return ":\"" + text + "\"";
         } else {
             return ":" + text;
@@ -147,7 +137,7 @@ public class Symbol extends IokeData {
     }
 
 	public String notice(Object obj) throws ControlFlow {
-        if(!onlyGoodChars(obj)) {
+        if(!onlyGoodChars()) {
             return ":\"" + text + "\"";
         } else {
             return ":" + text;

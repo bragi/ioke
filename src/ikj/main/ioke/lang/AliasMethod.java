@@ -9,7 +9,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class AliasMethod extends IokeData implements Named, Inspectable, AssociatedCode {
+public class AliasMethod extends IokeData implements Named, AssociatedCode {
     String name;
     IokeData realMethod;
     IokeObject realSelf;

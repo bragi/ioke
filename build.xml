@@ -81,6 +81,17 @@
     </java>
   </target>
 
+  <target name="test-debug" depends="compile" description="Runs all ISpec tests">
+    <java classname="ioke.lang.Main" fork="true" failonerror="true" maxmemory="256m">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+
+      <arg line="bin/ispec test -fs"/>
+      <jvmarg value="-Xdebug" />
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,address=127.0.0.1:8000" />
+    </java>
+  </target>
+
   <target name="coverage" depends="coverage.instrument" description="Runs all ISpec tests using Cobertura and produces a report">
     <java classname="ioke.lang.Main" fork="true" failonerror="true">
       <classpath refid="build.classpath"/>

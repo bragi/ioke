@@ -14,7 +14,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class LexicalBlock extends IokeData implements AssociatedCode, Inspectable {
+public class LexicalBlock extends IokeData implements AssociatedCode {
     private DefaultArgumentsDefinition arguments;
     private IokeObject context;
     private IokeObject message;
@@ -145,13 +145,7 @@ public class LexicalBlock extends IokeData implements AssociatedCode, Inspectabl
                 }
             }));
         lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod(new CommonMethods.Inspect()));
-        lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
-                @Override
-                public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return context.runtime.newText(LexicalBlock.getNotice(on));
-                }
-            }));
+        lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod(new CommonMethods.Notice()));
         lexicalBlock.registerMethod(lexicalBlock.runtime.newNativeMethod("returns idiomatically formatted code for this lexical block", new NativeMethod.WithNoArguments("formattedCode") {
                 @Override
                 public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
@@ -204,14 +198,6 @@ public class LexicalBlock extends IokeData implements AssociatedCode, Inspectabl
         arguments.assignArgumentValues(c, dynamicContext, message, on);
 
         return ((Message)IokeObject.data(this.message)).evaluateCompleteWith(this.message, c, on);
-    }
-
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((LexicalBlock)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((LexicalBlock)(IokeObject.data(on))).notice(on);
     }
 
     public String getFormattedCode(Object self) throws ControlFlow {

@@ -15,7 +15,7 @@ import ioke.lang.util.IdentitySet;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class IokeSet extends IokeData implements Inspectable {
+public class IokeSet extends IokeData {
     private Set<Object> set;
 
     public IokeSet() {
@@ -35,19 +35,14 @@ public class IokeSet extends IokeData implements Inspectable {
 
         obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Notice()));
+
         obj.registerMethod(obj.runtime.newNativeMethod("Converts this set to use identity semantics, and then returns it.", new TypeCheckingNativeMethod.WithNoArguments("withIdentitySemantics!", runtime.set) {
                 @Override
                 public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
                     IokeSet set = (IokeSet)IokeObject.data(on);
                     set.set = new IdentitySet<Object>(set.set);
                     return on;
-                }
-            }));
-
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.set) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(IokeSet.getNotice(on));
                 }
             }));
 
@@ -224,14 +219,6 @@ public class IokeSet extends IokeData implements Inspectable {
     @Override
     public String toString(IokeObject obj) {
         return set.toString();
-    }
-
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((IokeSet)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((IokeSet)(IokeObject.data(on))).notice(on);
     }
 
     public String inspect(Object obj) throws ControlFlow {

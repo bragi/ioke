@@ -587,8 +587,8 @@ describe(Regexp,
       )
     )
 
-    it("should validate type of receiver",
-      Regexp should checkReceiverTypeOn(:inspect)
+    it("should return Text",
+      Pair inspect kind should == "Text"
     )
   )
 
@@ -598,8 +598,8 @@ describe(Regexp,
       #/foo/x notice should == "#/foo/x"
     )
 
-    it("should validate type of receiver",
-      Regexp should checkReceiverTypeOn(:notice)
+    it("should return Text",
+      Pair notice kind should == "Text"
     )
   )
 

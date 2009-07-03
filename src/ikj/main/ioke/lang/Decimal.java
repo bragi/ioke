@@ -23,7 +23,7 @@ import gnu.math.RatNum;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class Decimal extends IokeData implements Inspectable {
+public class Decimal extends IokeData {
     private final static DecimalFormatSymbols SYMBOLS = new DecimalFormatSymbols(Locale.US);
     private final BigDecimal value;
 
@@ -72,10 +72,6 @@ public class Decimal extends IokeData implements Inspectable {
         return self;
     }
 
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((Decimal)(IokeObject.data(on))).inspect(on);
-    }
-
     public String inspect(Object obj)  throws ControlFlow {
         return asJavaString();
     }
@@ -101,12 +97,7 @@ public class Decimal extends IokeData implements Inspectable {
 
         decimal.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        decimal.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", decimal) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Decimal.getInspect(on));
-                }
-            }));
+        decimal.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Notice()));
 
         decimal.registerMethod(runtime.newNativeMethod("compares this number against the argument, true if this number is the same, otherwise false", new TypeCheckingNativeMethod("==") {
                 private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition

@@ -313,33 +313,13 @@ public class Range extends IokeData {
                 }
             }));
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a text inspection of the object", new NativeMethod.WithNoArguments("inspect") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return method.runtime.newText(Range.getInspect(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
-                @Override
-                public Object activate(IokeObject method, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-                    return method.runtime.newText(Range.getNotice(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Notice()));
     }
     
     public IokeData cloneData(IokeObject obj, IokeObject m, IokeObject context) {
         return new Range(from, to, inclusive, inverted);
-    }
-
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((Range)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((Range)(IokeObject.data(on))).notice(on);
     }
 
     @Override

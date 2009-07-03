@@ -175,19 +175,9 @@ public class Regexp extends IokeData {
                 }
             }));
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("inspect", runtime.regexp) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Regexp.getInspect(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.regexp) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Regexp.getNotice(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Notice()));
 
         obj.registerMethod(runtime.newNativeMethod("returns a list of all the named groups in this regular expression", new TypeCheckingNativeMethod.WithNoArguments("names", runtime.regexp) {
                 @Override
@@ -200,14 +190,6 @@ public class Regexp extends IokeData {
                     return context.runtime.newList(theNames);
                 }
             }));
-    }
-
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((Regexp)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((Regexp)(IokeObject.data(on))).notice(on);
     }
 
     public String inspect(Object obj) throws ControlFlow {

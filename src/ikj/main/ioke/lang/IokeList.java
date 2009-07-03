@@ -17,7 +17,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class IokeList extends IokeData implements Inspectable {
+public class IokeList extends IokeData {
     private List<Object> list;
 
     public IokeList() {
@@ -45,12 +45,7 @@ public class IokeList extends IokeData implements Inspectable {
 
         obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.list) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(IokeList.getNotice(on));
-                }
-            }));
+        obj.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Notice()));
 
         obj.registerMethod(obj.runtime.newNativeMethod("Compares this object against the argument. The comparison is only based on the elements inside the lists, which are in turn compared using <=>.", new TypeCheckingNativeMethod("<=>") {
                 private final TypeCheckingArgumentsDefinition ARGUMENTS = TypeCheckingArgumentsDefinition
@@ -944,14 +939,6 @@ public class IokeList extends IokeData implements Inspectable {
         ((IokeList)(IokeObject.data(on))).setList(list);
     }
 
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((IokeList)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((IokeList)(IokeObject.data(on))).notice(on);
-    }
-    
     public static IokeObject emptyList(IokeObject context) {
     	return context.runtime.newList(new ArrayList<Object>());
     }

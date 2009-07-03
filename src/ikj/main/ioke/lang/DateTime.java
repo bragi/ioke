@@ -12,7 +12,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class DateTime extends IokeData implements Inspectable {
+public class DateTime extends IokeData {
     private org.joda.time.DateTime dateTime;
 
     public DateTime() {
@@ -66,24 +66,11 @@ public class DateTime extends IokeData implements Inspectable {
 
         obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        obj.registerMethod(runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", runtime.dateTime) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(DateTime.getNotice(on));
-                }
-            }));
+        obj.registerMethod(runtime.newNativeMethod(new CommonMethods.Notice()));
     }
 
     public IokeData cloneData(IokeObject obj, IokeObject m, IokeObject context) {
         return this;
-    }
-
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((DateTime)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((DateTime)(IokeObject.data(on))).notice(on);
     }
 
     @Override

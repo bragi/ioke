@@ -22,7 +22,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class Number extends IokeData implements Inspectable {
+public class Number extends IokeData {
     private final RatNum value;
     private final boolean kind;
 
@@ -95,10 +95,6 @@ public class Number extends IokeData implements Inspectable {
     @Override
     public String toString(IokeObject obj) {
         return asJavaString();
-    }
-
-    public static String getInspect(Object on) {
-        return ((Number)(IokeObject.data(on))).inspect(on);
     }
 
     public String inspect(Object obj) {
@@ -619,12 +615,7 @@ public class Number extends IokeData implements Inspectable {
 
         rational.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Inspect()));
 
-        rational.registerMethod(obj.runtime.newNativeMethod("Returns a brief text inspection of the object", new TypeCheckingNativeMethod.WithNoArguments("notice", number) {
-                @Override
-                public Object activate(IokeObject method, Object on, List<Object> args, Map<String, Object> keywords, IokeObject context, IokeObject message) throws ControlFlow {
-                    return method.runtime.newText(Number.getInspect(on));
-                }
-            }));
+        rational.registerMethod(obj.runtime.newNativeMethod(new CommonMethods.Notice()));
 
         integer.registerMethod(runtime.newNativeMethod("Returns the successor of this number", new TypeCheckingNativeMethod.WithNoArguments("succ", integer) {
                 @Override
@@ -699,7 +690,6 @@ public class Number extends IokeData implements Inspectable {
     }
 
 	public String notice(Object self) {
-		// TODO Auto-generated method stub
-		return null;
+		return asJavaString();
 	}
 }// Number

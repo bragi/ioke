@@ -10,6 +10,6 @@ import ioke.lang.exceptions.ControlFlow;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public interface Inspectable {
-    String inspect(Object self) throws ControlFlow;
-    String notice(Object self) throws ControlFlow;
+    public String inspect(Object self) throws ControlFlow;
+    public String notice(Object self) throws ControlFlow;
 }// Inspectable

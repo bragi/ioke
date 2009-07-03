@@ -26,14 +26,14 @@ describe("Symbol",
   )
   
   describe("inspect",
-    it("should validate type of receiver",
-      Symbol should checkReceiverTypeOn(:inspect)
+    it("should return Text",
+      Pair inspect kind should == "Text"
     )
   )
   
   describe("notice",
-    it("should validate type of receiver",
-      Symbol should checkReceiverTypeOn(:notice)
+    it("should return Text",
+      Pair notice kind should == "Text"
     )
   )
   

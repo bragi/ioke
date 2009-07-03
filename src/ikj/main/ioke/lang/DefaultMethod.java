@@ -86,7 +86,7 @@ public class DefaultMethod extends Method implements AssociatedCode {
     }
 
     @Override
-    public String inspect(Object self) {
+    public String inspect(Object self) throws ControlFlow {
         String args = arguments == null ? "" : arguments.getCode();
         if(name == null) {
             return "method(" + args + Message.code(code) + ")";

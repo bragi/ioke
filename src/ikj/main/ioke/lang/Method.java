@@ -13,7 +13,7 @@ import ioke.lang.exceptions.ControlFlow;
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class Method extends IokeData implements Named, Inspectable {
+public class Method extends IokeData implements Named {
     String name;
 
     public Method(String name) {
@@ -38,14 +38,7 @@ public class Method extends IokeData implements Named, Inspectable {
                 }
             }));
         method.registerMethod(method.runtime.newNativeMethod(new CommonMethods.Inspect()));
-        method.registerMethod(method.runtime.newNativeMethod("Returns a brief text inspection of the object", new NativeMethod.WithNoArguments("notice") {
-                @Override
-                public Object activate(IokeObject self, IokeObject context, IokeObject message, Object on) throws ControlFlow {
-                    getArguments().getEvaluatedArguments(context, message, on, new ArrayList<Object>(), new HashMap<String, Object>());
-
-                    return context.runtime.newText(Method.getNotice(on));
-                }
-            }));
+        method.registerMethod(method.runtime.newNativeMethod(new CommonMethods.Notice()));
         method.registerMethod(method.runtime.newNativeMethod("activates this method with the arguments given to call", new NativeMethod("call") {
                 private final DefaultArgumentsDefinition ARGUMENTS = DefaultArgumentsDefinition
                     .builder()
@@ -100,19 +93,11 @@ public class Method extends IokeData implements Named, Inspectable {
         return errorNotActivatableCondition(method, context, message, on);
     }
 
-    public static String getInspect(Object on) throws ControlFlow {
-        return ((Inspectable)(IokeObject.data(on))).inspect(on);
-    }
-
-    public static String getNotice(Object on) throws ControlFlow {
-        return ((Inspectable)(IokeObject.data(on))).notice(on);
-    }
-
-    public String inspect(Object self) {
+    public String inspect(Object self) throws ControlFlow {
         return getCodeString();
     }
 
-    public String notice(Object self) {
+    public String notice(Object self) throws ControlFlow {
         if(name == null) {
             return "method(...)";
         } else {
